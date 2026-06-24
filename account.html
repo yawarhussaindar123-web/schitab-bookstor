@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Account — Schitab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FBF9F4; --white: #FFFFFF; --navy: #1B2A4A; --navy-light: #2E4270;
+    --gold: #C9A227; --gold-soft: #F4E8C1; --text-muted: #6B7280; --border: #E8E4DA;
+    --green: #1F7A4D; --green-soft: #E3F0E8; --blue: #2563EB; --blue-soft: #E8F0FE;
+    --purple: #6D28D9; --purple-soft: #EDE7FB;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--navy); font-weight:500; -webkit-font-smoothing:antialiased; }
+  a { text-decoration:none; color:inherit; }
+
+  header { background:var(--white); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:50; }
+  .header-inner { max-width:1100px; margin:0 auto; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+  .logo { font-family:'Playfair Display',serif; font-weight:800; font-size:26px; color:var(--navy); }
+  .logo span { color:var(--gold); }
+  .icon-btn { width:40px; height:40px; border-radius:50%; background:var(--cream); display:flex; align-items:center; justify-content:center; border:1px solid var(--border); position:relative; }
+  .cart-badge { position:absolute; top:-4px; right:-4px; background:var(--gold); color:var(--navy); font-size:10px; font-weight:800; min-width:18px; height:18px; border-radius:100px; display:flex; align-items:center; justify-content:center; padding:0 4px; border:2px solid var(--white); }
+
+  .page-title-bar { max-width:1100px; margin:0 auto; padding:24px 20px 8px; }
+  .page-title-bar h1 { font-size:clamp(22px,4vw,30px); font-weight:800; }
+
+  .account-wrap { max-width:1100px; margin:0 auto; padding:16px 20px 60px; display:grid; grid-template-columns:220px 1fr; gap:24px; align-items:start; }
+  @media (max-width:760px) { .account-wrap { grid-template-columns:1fr; } }
+
+  /* Sidebar nav */
+  .acc-nav { background:var(--white); border:1px solid var(--border); border-radius:14px; padding:10px; position:sticky; top:90px; }
+  @media (max-width:760px) { .acc-nav { position:static; display:flex; overflow-x:auto; gap:4px; } }
+  .acc-nav-item { display:flex; align-items:center; gap:10px; padding:11px 14px; border-radius:8px; font-size:13.5px; font-weight:700; color:var(--text-muted); cursor:pointer; white-space:nowrap; }
+  .acc-nav-item.active { background:var(--navy); color:var(--white); }
+  .acc-nav-item:hover:not(.active) { background:var(--cream); }
+
+  .panel { display:none; }
+  .panel.active { display:block; }
+
+  /* Profile */
+  .card { background:var(--white); border:1px solid var(--border); border-radius:14px; padding:20px; margin-bottom:16px; }
+  .card h3 { font-size:16px; font-weight:800; margin-bottom:14px; }
+  .profile-row { display:flex; align-items:center; gap:16px; margin-bottom:18px; }
+  .avatar { width:56px; height:56px; border-radius:50%; background:var(--gold-soft); color:var(--navy); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:20px; flex-shrink:0; }
+  .profile-row .name { font-size:17px; font-weight:800; }
+  .profile-row .sub { font-size:12.5px; color:var(--text-muted); margin-top:2px; }
+
+  .field-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:480px) { .field-grid { grid-template-columns:1fr; } }
+  .field-grid label { display:block; font-size:11.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); margin-bottom:4px; }
+  .field-grid .val { font-size:14.5px; font-weight:700; }
+
+  .btn { padding:10px 20px; border-radius:8px; border:none; font-size:13.5px; font-weight:700; cursor:pointer; transition:background 0.2s; }
+  .btn-outline { background:var(--white); border:1.5px solid var(--border); color:var(--navy); }
+  .btn-outline:hover { background:var(--gold-soft); }
+  .btn-primary { background:var(--navy); color:var(--white); }
+  .btn-primary:hover { background:var(--navy-light); }
+  .btn-danger-text { background:none; border:none; color:#b91c1c; font-size:13px; font-weight:700; text-decoration:underline; cursor:pointer; padding:0; }
+
+  /* Addresses */
+  .address-card { border:1.5px solid var(--border); border-radius:10px; padding:14px; margin-bottom:10px; display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
+  .address-card .info { font-size:13px; line-height:1.6; }
+  .address-card .info b { font-weight:800; }
+  .tag { display:inline-block; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; background:var(--navy); color:var(--white); padding:2px 8px; border-radius:100px; margin-left:8px; }
+  .address-actions { display:flex; gap:8px; flex-shrink:0; }
+  .icon-action { width:30px; height:30px; border-radius:6px; border:1px solid var(--border); background:var(--white); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--navy); }
+  .icon-action:hover { background:var(--gold-soft); }
+  .icon-action.danger:hover { background:#FBEAEA; color:#b91c1c; border-color:#b91c1c; }
+  .add-addr-btn { width:100%; padding:12px; border:1.5px dashed var(--border); border-radius:10px; background:none; font-size:13px; font-weight:700; color:var(--navy); cursor:pointer; }
+  .add-addr-btn:hover { background:var(--cream); }
+
+  /* Orders */
+  .order-card { border:1.5px solid var(--border); border-radius:12px; padding:16px; margin-bottom:14px; }
+  .order-head { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+  .order-id { font-size:14px; font-weight:800; }
+  .order-date { font-size:12px; color:var(--text-muted); }
+  .order-total { font-size:16px; font-weight:800; }
+
+  .badge { display:inline-block; font-size:11px; font-weight:800; padding:4px 10px; border-radius:100px; }
+  .badge-placed { background:var(--blue-soft); color:var(--blue); }
+  .badge-packed { background:var(--gold-soft); color:#92740E; }
+  .badge-shipped { background:var(--purple-soft); color:var(--purple); }
+  .badge-delivered { background:var(--green-soft); color:var(--green); }
+
+  .order-items-preview { font-size:12.5px; color:var(--text-muted); margin-bottom:14px; }
+
+  /* Status timeline */
+  .timeline { display:flex; align-items:flex-start; margin-top:6px; }
+  .timeline-step { flex:1; text-align:center; position:relative; }
+  .timeline-step .dot { width:22px; height:22px; border-radius:50%; background:var(--border); color:var(--white); display:flex; align-items:center; justify-content:center; margin:0 auto 6px; font-size:11px; font-weight:800; position:relative; z-index:1; }
+  .timeline-step.done .dot { background:var(--green); }
+  .timeline-step.current .dot { background:var(--navy); }
+  .timeline-step .label { font-size:11px; font-weight:700; color:var(--text-muted); }
+  .timeline-step.done .label, .timeline-step.current .label { color:var(--navy); }
+  .timeline-step:not(:last-child)::after {
+    content:''; position:absolute; top:11px; left:50%; width:100%; height:2px; background:var(--border); z-index:0;
+  }
+  .timeline-step.done:not(:last-child)::after { background:var(--green); }
+
+  .order-actions { display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; }
+
+  /* Empty state */
+  .empty-state { text-align:center; padding:50px 24px; }
+  .empty-state .icon { font-size:40px; margin-bottom:12px; opacity:0.4; }
+  .empty-state h3 { font-size:17px; font-weight:800; margin-bottom:6px; }
+  .empty-state p { font-size:13px; color:var(--text-muted); margin-bottom:18px; }
+
+  footer { background:var(--navy); color:var(--white); text-align:center; padding:28px 20px; font-size:13px; opacity:0.75; }
+  footer .logo-foot { font-family:'Playfair Display',serif; font-weight:700; font-size:18px; color:var(--white); margin-bottom:6px; }
+  footer .logo-foot span { color:var(--gold); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo">Schi<span>tab</span></a>
+    <a href="cart.html" class="icon-btn" title="Cart">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B2A4A" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <span class="cart-badge">0</span>
+    </a>
+  </div>
+</header>
+
+<div class="page-title-bar"><h1>My Account</h1></div>
+
+<main class="account-wrap">
+
+  <nav class="acc-nav">
+    <div class="acc-nav-item active" data-tab="profile">Profile</div>
+    <div class="acc-nav-item" data-tab="addresses">Addresses</div>
+    <div class="acc-nav-item" data-tab="orders">My Orders</div>
+    <div class="acc-nav-item" data-tab="wishlist-link">
+      <a href="wishlist.html" style="color:inherit; font-weight:700;">Wishlist</a>
+    </div>
+  </nav>
+
+  <div>
+    <!-- PROFILE -->
+    <div class="panel active" id="panel-profile">
+      <div class="card">
+        <div class="profile-row">
+          <div class="avatar" id="profileAvatar">SY</div>
+          <div>
+            <div class="name" id="profileName">Schitab User</div>
+            <div class="sub" id="profileMemberSince">Member since June 2026</div>
+          </div>
+        </div>
+        <div class="field-grid">
+          <div><label>Full Name</label><div class="val" id="profileFullNameVal">—</div></div>
+          <div><label>Email</label><div class="val" id="profileEmailVal">—</div></div>
+          <div><label>Phone</label><div class="val">—</div></div>
+          <div><label>Password</label><div class="val">••••••••</div></div>
+        </div>
+      </div>
+      <div class="card" style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn btn-outline" id="editProfileBtn">Edit Profile</button>
+        <button class="btn-danger-text" id="logoutBtn">Log Out</button>
+      </div>
+    </div>
+
+    <!-- ADDRESSES -->
+    <div class="panel" id="panel-addresses">
+      <div class="card">
+        <h3>Saved Addresses</h3>
+        <div id="addressList">
+          <div class="address-card">
+            <div class="info">
+              <b>Saved Address 1</b><span class="tag">Home</span><br>
+              House No. XX, Street Name, Locality,<br>
+              District, Jammu &amp; Kashmir — 1XXXXX<br>
+              Phone: XXXXX XXXXX
+            </div>
+            <div class="address-actions">
+              <div class="icon-action" title="Edit">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </div>
+              <div class="icon-action danger" title="Delete">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="add-addr-btn" id="addAddrBtn">+ Add a new address</button>
+      </div>
+    </div>
+
+    <!-- ORDERS -->
+    <div class="panel" id="panel-orders">
+      <!-- Populated dynamically by loadOrderHistory() -->
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="logo-foot">Schi<span>tab</span></div>
+  <div>Reban, Kashmir · Order via WhatsApp</div>
+</footer>
+
+<script>
+  // Tab switching
+  const navItems = document.querySelectorAll('.acc-nav-item[data-tab]');
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      if (item.dataset.tab === 'wishlist-link') return; // it's a real link
+      navItems.forEach(n => n.classList.remove('active'));
+      item.classList.add('active');
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('panel-' + item.dataset.tab).classList.add('active');
+    });
+  });
+
+  // ===== PROFILE (real session data — name, email, avatar, member since) =====
+  function initials(name) {
+    if (!name) return 'SU';
+    const parts = name.trim().split(/\s+/);
+    const first = parts[0]?.[0] || '';
+    const last = parts.length > 1 ? parts[parts.length - 1][0] : '';
+    return (first + last).toUpperCase() || 'SU';
+  }
+
+  function formatMemberSince(iso) {
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return 'Member since June 2026';
+    return 'Member since ' + d.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+  }
+
+  function loadProfile() {
+    const session = getSession();
+    if (!session?.user) return; // not logged in — leave existing placeholders as-is
+
+    const fullName = session.user.user_metadata?.full_name || 'Schitab User';
+    const email = session.user.email || '—';
+
+    document.getElementById('profileAvatar').textContent = initials(fullName);
+    document.getElementById('profileName').textContent = fullName;
+    document.getElementById('profileMemberSince').textContent = formatMemberSince(session.user.created_at);
+    document.getElementById('profileFullNameVal').textContent = fullName;
+    document.getElementById('profileEmailVal').textContent = email;
+    // Phone intentionally left as placeholder — not reliably stored yet.
+  }
+
+  // Edit profile
+  document.getElementById('editProfileBtn').addEventListener('click', () => {
+    alert('Profile editing would open here.\n\n(This is a design preview — real profile editing connects to your account once hosting + backend is set up.)');
+  });
+
+  // Logout — clears real session and returns to login
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    if (confirm('Log out of your Schitab account?')) {
+      localStorage.removeItem('schitab_session');
+      window.location.href = 'login.html';
+    }
+  });
+
+  // Add address
+  document.getElementById('addAddrBtn').addEventListener('click', () => {
+    alert('This would open the address form (same as on Checkout) to add a new saved address.\n\n(This is a design preview — real saving connects once hosting + backend is set up.)');
+  });
+
+  // Address edit/delete
+  document.querySelectorAll('.address-actions .icon-action').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.classList.contains('danger')) {
+        if (confirm('Remove this address?\n\n(This is a design preview.)')) {
+          btn.closest('.address-card').remove();
+        }
+      } else {
+        alert('This would open the address form pre-filled for editing.\n\n(This is a design preview.)');
+      }
+    });
+  });
+
+  // ===== MY ORDERS (real data from Supabase — order_history.js logic, inlined) =====
+  const SUPABASE_URL = 'https://khhblggrzqnlcjfvwwhk.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_BfgZnaVfjyzy4xon-iD-Qw_EIpMlJzF';
+
+  function getSession() {
+    try {
+      const raw = localStorage.getItem('schitab_session');
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+  }
+
+  function formatOrderDate(iso) {
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+
+  function formatRupees(val) {
+    const n = parseFloat(val);
+    return isNaN(n) ? val : '₹' + Math.round(n);
+  }
+
+  // Maps your order pipeline to the existing badge/timeline UI.
+  // If you add new status values in the admin panel later, extend this map.
+  const STATUS_STEPS = ['placed', 'packed', 'shipped', 'delivered'];
+  const STATUS_ALIASES = {
+    confirmed: 'placed',
+    pending: 'placed',
+    pending_payment: 'placed',
+    processing: 'packed',
+    dispatched: 'shipped',
+    completed: 'delivered'
+  };
+
+  function normalizeStatus(status) {
+    const s = (status || '').toLowerCase();
+    return STATUS_ALIASES[s] || s;
+  }
+
+  function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  function renderBadge(status) {
+    const norm = normalizeStatus(status);
+    if (norm === 'cancelled' || norm === 'canceled') {
+      return `<span class="badge" style="background:#FBEAEA;color:#b91c1c;">Cancelled</span>`;
+    }
+    if (!STATUS_STEPS.includes(norm)) {
+      return `<span class="badge" style="background:var(--cream);color:var(--text-muted);">${status || 'Unknown'}</span>`;
+    }
+    return `<span class="badge badge-${norm}">${capitalize(norm)}</span>`;
+  }
+
+  function renderTimeline(status) {
+    const norm = normalizeStatus(status);
+    if (!STATUS_STEPS.includes(norm)) return ''; // cancelled / unrecognized — no timeline
+    const currentIndex = STATUS_STEPS.indexOf(norm);
+    const isFinal = currentIndex === STATUS_STEPS.length - 1;
+
+    const steps = STATUS_STEPS.map((step, i) => {
+      let cls = 'timeline-step';
+      let dot = '';
+      if (i < currentIndex || (isFinal && i <= currentIndex)) {
+        cls += ' done';
+        dot = '✓';
+      } else if (i === currentIndex) {
+        cls += ' current';
+        dot = String(i + 1);
+      }
+      return `<div class="${cls}"><div class="dot">${dot}</div><div class="label">${capitalize(step)}</div></div>`;
+    }).join('');
+
+    return `<div class="timeline">${steps}</div>`;
+  }
+
+  function renderOrderCard(order) {
+    const items = order.order_items || [];
+    const itemsText = items
+      .map(it => `${it.books?.title || 'Book'} x${it.quantity}`)
+      .join(', ') || 'No items found';
+
+    return `
+      <div class="order-card">
+        <div class="order-head">
+          <div>
+            <div class="order-id">Order #${order.order_number}</div>
+            <div class="order-date">${formatOrderDate(order.created_at)}</div>
+          </div>
+          <div style="text-align:right;">
+            ${renderBadge(order.status)}
+            <div class="order-total">${formatRupees(order.total_amount)}</div>
+          </div>
+        </div>
+        <div class="order-items-preview">${itemsText}</div>
+        ${renderTimeline(order.status)}
+      </div>`;
+  }
+
+  async function loadOrders() {
+    const panel = document.getElementById('panel-orders');
+    if (!panel) return;
+    const session = getSession();
+
+    if (!session?.user?.id || !session?.access_token) {
+      panel.innerHTML = `
+        <div class="card empty-state">
+          <div class="icon">🔒</div>
+          <h3>Log in to see your orders</h3>
+          <p>Your order history is tied to your Schitab account.</p>
+          <a href="login.html" class="btn btn-primary">Log In</a>
+        </div>`;
+      return;
+    }
+
+    panel.innerHTML = `<div class="card"><p style="text-align:center;color:var(--text-muted);padding:24px 0;">Loading your orders…</p></div>`;
+
+    try {
+      const url = `${SUPABASE_URL}/rest/v1/orders?user_id=eq.${session.user.id}&select=*,order_items(*,books(title,cover_url,slug))&order=created_at.desc`;
+      const res = await fetch(url, {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': 'Bearer ' + session.access_token
+        }
+      });
+
+      if (!res.ok) throw new Error('Server returned status ' + res.status);
+
+      const orders = await res.json();
+
+      if (!Array.isArray(orders) || orders.length === 0) {
+        panel.innerHTML = `
+          <div class="card empty-state">
+            <div class="icon">📦</div>
+            <h3>No orders yet</h3>
+            <p>When you place an order, it'll show up here.</p>
+            <a href="index.html" class="btn btn-primary">Browse Books</a>
+          </div>`;
+        return;
+      }
+
+      panel.innerHTML = `<div class="card"><h3>Your Orders</h3></div>` +
+        orders.map(renderOrderCard).join('');
+
+    } catch (err) {
+      panel.innerHTML = `
+        <div class="card empty-state">
+          <div class="icon">⚠️</div>
+          <h3>Couldn't load your orders</h3>
+          <p>${err.message}</p>
+          <button class="btn btn-outline" onclick="loadOrders()">Try Again</button>
+        </div>`;
+    }
+  }
+
+  loadOrders();
+  loadProfile();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Schitab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FBF9F4;
+    --white: #FFFFFF;
+    --navy: #1B2A4A;
+    --navy-light: #2E4270;
+    --gold: #C9A227;
+    --gold-soft: #F4E8C1;
+    --text-muted: #6B7280;
+    --border: #E8E4DA;
+    --green: #1F7A4D;
+    --green-soft: #E3F0E8;
+    --red: #b91c1c;
+    --red-soft: #FBEAEA;
+    --blue: #2563EB;
+    --blue-soft: #E8F0FE;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--navy);
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { text-decoration: none; color: inherit; }
+  button { font-family: inherit; }
+
+  /* ===== LAYOUT ===== */
+  .admin-layout {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    width: 220px;
+    background: var(--navy);
+    color: var(--white);
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
+
+  .sidebar-logo {
+    font-family: 'Playfair Display', serif;
+    font-weight: 800;
+    font-size: 22px;
+    padding: 22px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .sidebar-logo span { color: var(--gold); }
+  .sidebar-logo .tag {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-top: 2px;
+  }
+
+  .sidebar-nav { padding: 12px; flex: 1; }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 12px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    margin-bottom: 2px;
+    transition: background 0.15s, color 0.15s;
+  }
+  .nav-item svg { flex-shrink: 0; }
+  .nav-item:hover { background: rgba(255,255,255,0.06); color: var(--white); }
+  .nav-item.active {
+    background: var(--gold);
+    color: var(--navy);
+  }
+
+  .nav-section-label {
+    font-size: 10.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.35);
+    padding: 16px 12px 6px;
+  }
+
+  .sidebar-footer {
+    padding: 14px 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+  }
+  .sidebar-footer a { color: var(--gold); font-weight: 700; }
+
+  /* ===== MAIN ===== */
+  .main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .topbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .topbar h1 {
+    font-size: 19px;
+    font-weight: 800;
+  }
+
+  .topbar-actions { display: flex; align-items: center; gap: 14px; }
+
+  .admin-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--gold-soft);
+    color: var(--navy);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    font-size: 13px;
+  }
+
+  .content { padding: 24px 28px 60px; }
+
+  /* ===== TAB PANELS ===== */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ===== STAT CARDS ===== */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+  }
+
+  .stat-card .label {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .stat-card .value {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--navy);
+  }
+
+  .stat-card .sub {
+    font-size: 11.5px;
+    color: var(--green);
+    font-weight: 700;
+    margin-top: 4px;
+  }
+
+  /* ===== TOOLBAR ===== */
+  .toolbar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .search-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-family: inherit;
+    background: var(--white);
+    outline: none;
+  }
+  .search-input:focus { border-color: var(--navy); }
+
+  select.filter-select {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-family: inherit;
+    background: var(--white);
+    color: var(--navy);
+    outline: none;
+  }
+
+  .btn {
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: none;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .btn-primary { background: var(--navy); color: var(--white); }
+  .btn-primary:hover { background: var(--navy-light); }
+  .btn-outline { background: var(--white); border: 1.5px solid var(--border); color: var(--navy); }
+  .btn-outline:hover { background: var(--gold-soft); }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+  /* ===== TABLE ===== */
+  .table-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    padding: 12px 16px;
+    background: var(--cream);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 12px 16px;
+    font-size: 13.5px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--cream); }
+
+  .book-cell { display: flex; align-items: center; gap: 10px; }
+  .book-cell img {
+    width: 32px; height: 44px;
+    object-fit: cover;
+    border-radius: 4px;
+    background: var(--gold-soft);
+    flex-shrink: 0;
+  }
+  .book-cell .title { font-weight: 700; }
+  .book-cell .meta { font-size: 11.5px; color: var(--text-muted); }
+
+  /* Badges */
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 100px;
+    text-transform: capitalize;
+  }
+  .badge-instock { background: var(--green-soft); color: var(--green); }
+  .badge-preorder { background: var(--gold-soft); color: #92740E; }
+  .badge-out { background: var(--red-soft); color: var(--red); }
+
+  .badge-placed { background: var(--blue-soft); color: var(--blue); }
+  .badge-packed { background: var(--gold-soft); color: #92740E; }
+  .badge-shipped { background: #EDE7FB; color: #6D28D9; }
+  .badge-delivered { background: var(--green-soft); color: var(--green); }
+  .badge-cancelled { background: var(--red-soft); color: var(--red); }
+
+  .row-actions { display: flex; gap: 8px; }
+  .icon-action {
+    width: 30px; height: 30px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: var(--navy);
+  }
+  .icon-action:hover { background: var(--gold-soft); }
+  .icon-action.danger:hover { background: var(--red-soft); color: var(--red); border-color: var(--red); }
+
+  /* status select in orders */
+  .status-select {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    font-size: 12px;
+    font-weight: 700;
+    font-family: inherit;
+    background: var(--white);
+    color: var(--navy);
+  }
+
+  /* ===== MODAL (Add/Edit Book) ===== */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(27,42,74,0.45);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--white);
+    border-radius: 14px;
+    max-width: 520px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 24px;
+  }
+
+  .modal h3 { font-size: 17px; font-weight: 800; margin-bottom: 16px; }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-grid .full { grid-column: 1/-1; }
+  @media (max-width: 480px) { .form-grid { grid-template-columns: 1fr; } .form-grid .full { grid-column: 1; } }
+
+  .field { margin-bottom: 4px; }
+  .field label {
+    display: block; font-size: 12px; font-weight: 700; margin-bottom: 5px;
+  }
+  .field input, .field select, .field textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-family: inherit;
+    background: var(--cream);
+    outline: none;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--navy); background: var(--white); }
+
+  .modal-actions {
+    display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px;
+  }
+
+  /* ===== UPLOAD ZONE (Notes/PYQ) ===== */
+  .upload-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .upload-card h3 { font-size: 15px; font-weight: 800; margin-bottom: 14px; }
+  .dropzone {
+    border: 1.5px dashed var(--border);
+    border-radius: 10px;
+    padding: 30px 20px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-bottom: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .dropzone:hover { border-color: var(--navy); background: var(--cream); }
+  .dropzone strong { color: var(--navy); }
+
+  /* Empty state */
+  .empty-row td {
+    text-align: center;
+    padding: 40px 16px;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  /* Mobile: collapse sidebar to top bar */
+  @media (max-width: 860px) {
+    .sidebar {
+      width: 100%;
+      height: auto;
+      position: static;
+      flex-direction: row;
+      align-items: center;
+      overflow-x: auto;
+    }
+    .sidebar-logo { padding: 14px 16px; border: none; white-space: nowrap; }
+    .sidebar-nav { display: flex; padding: 8px; flex: 0; }
+    .nav-section-label { display: none; }
+    .nav-item { white-space: nowrap; }
+    .sidebar-footer { display: none; }
+    .admin-layout { flex-direction: column; }
+    .content { padding: 16px; }
+    .topbar { padding: 14px 16px; }
+    th, td { padding: 10px; font-size: 12.5px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="accessGateOverlay" style="position:fixed;inset:0;background:#FBF9F4;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;color:#1B2A4A;font-weight:700;font-size:14px;z-index:9999;">
+  Checking access…
+</div>
+
+<div class="admin-layout" id="adminLayout" style="display:none;">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      Schi<span>tab</span>
+      <span class="tag">Admin Panel</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" data-tab="dashboard">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Dashboard
+      </div>
+
+      <div class="nav-section-label">Catalog</div>
+      <div class="nav-item" data-tab="books">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Books
+      </div>
+      <div class="nav-item" data-tab="notes">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+        Notes &amp; PYQs
+      </div>
+
+      <div class="nav-section-label">Sales</div>
+      <div class="nav-item" data-tab="orders">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        Orders
+      </div>
+      <div class="nav-item" data-tab="customers">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Customers
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      Logged in as <a href="#">Admin</a><br>
+      <a href="index.html">← Back to website</a>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <div class="main">
+
+    <div class="topbar">
+      <h1 id="pageTitle">Dashboard</h1>
+      <div class="topbar-actions">
+        <div class="admin-avatar">SY</div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ===== DASHBOARD TAB ===== -->
+      <div class="tab-panel active" id="tab-dashboard">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="label">Total Books Listed</div>
+            <div class="value">5</div>
+            <div class="sub">+5 this week</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Pending Orders</div>
+            <div class="value">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Orders Delivered</div>
+            <div class="value">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Revenue (This Month)</div>
+            <div class="value">₹0</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <table>
+            <thead>
+              <tr><th colspan="3">Recent Activity</th></tr>
+            </thead>
+            <tbody>
+              <tr class="empty-row"><td colspan="3">No orders yet. Once your store goes live, recent orders and activity will show up here.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== BOOKS TAB ===== -->
+      <div class="tab-panel" id="tab-books">
+        <div class="toolbar">
+          <input type="text" class="search-input" id="bookSearchInput" placeholder="Search books by title or category...">
+          <select class="filter-select" id="categoryFilterSelect">
+            <option value="">All Categories</option>
+          </select>
+          <select class="filter-select" id="availabilityFilterSelect">
+            <option value="">All Status</option>
+            <option value="in_stock">In Stock</option>
+            <option value="preorder">Preorder</option>
+            <option value="out_of_stock">Out of Stock</option>
+          </select>
+          <button class="btn btn-primary" id="addBookBtn">+ Add Book</button>
+        </div>
+
+        <div class="table-card">
+          <table>
+            <thead>
+              <tr>
+                <th>Book</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>MRP</th>
+                <th>Availability</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="booksTableBody">
+              <tr class="empty-row"><td colspan="6">Loading books…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== ORDERS TAB ===== -->
+      <div class="tab-panel" id="tab-orders">
+        <div class="toolbar">
+          <input type="text" class="search-input" id="orderSearchInput" placeholder="Search by order ID or customer name...">
+          <select class="filter-select" id="orderStatusFilterSelect">
+            <option value="">All Statuses</option>
+            <option value="placed">Placed</option>
+            <option value="packed">Packed</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        <div class="table-card">
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Payment</th>
+                <th>Status</th>
+                <th>Placed</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+              <tr class="empty-row"><td colspan="7">Loading orders…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== NOTES & PYQ TAB ===== -->
+      <div class="tab-panel" id="tab-notes">
+        <div class="upload-card">
+          <h3>Upload Study Notes (PDF)</h3>
+          <div class="form-grid" style="margin-bottom:14px;">
+            <div class="field">
+              <label>Class</label>
+              <select id="notes_class">
+                <option>Class 9</option>
+                <option>Class 10</option>
+                <option>Class 11</option>
+                <option>Class 12</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Subject</label>
+              <select id="notes_subject">
+                <option>Physics</option>
+                <option>Chemistry</option>
+                <option>Biology</option>
+                <option>Mathematics</option>
+                <option>English</option>
+                <option>Hindi</option>
+                <option>Urdu</option>
+                <option>History</option>
+                <option>Geography</option>
+                <option>Political Science</option>
+                <option>Economics</option>
+                <option>Business Studies</option>
+                <option>Accountancy</option>
+                <option>Computer Science</option>
+                <option>Physical Education</option>
+                <option>Sociology</option>
+                <option>Psychology</option>
+                <option>Environmental Science</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label>Title</label>
+              <input type="text" id="notes_title" placeholder="e.g. Electrostatics — Complete Notes">
+            </div>
+          </div>
+          <div class="dropzone" id="notesDropzone">
+            <strong>Tap to upload PDF</strong> or drag and drop<br>
+            Max file size 20MB
+            <input type="file" id="notesFileInput" accept="application/pdf" style="display:none;">
+            <div id="notesFileName" style="margin-top:8px; font-weight:700; color:var(--navy); display:none;"></div>
+          </div>
+          <button class="btn btn-primary" id="notesUploadBtn">Upload Notes</button>
+        </div>
+
+        <div class="upload-card">
+          <h3>Upload PYQ Paper (PDF)</h3>
+          <div class="form-grid" style="margin-bottom:14px;">
+            <div class="field">
+              <label>Exam</label>
+              <select id="pyq_exam">
+                <optgroup label="School Boards">
+                  <option>CBSE Class 10</option>
+                  <option>CBSE Class 12</option>
+                  <option>JKBOSE Class 10</option>
+                  <option>JKBOSE Class 12</option>
+                </optgroup>
+                <optgroup label="Engineering">
+                  <option>JEE Main</option>
+                  <option>JEE Advanced</option>
+                </optgroup>
+                <optgroup label="Medical">
+                  <option>NEET</option>
+                </optgroup>
+                <optgroup label="Government / Civil Services">
+                  <option>UPSC CSE Prelims</option>
+                  <option>UPSC CSE Mains</option>
+                  <option>SSC CGL</option>
+                  <option>SSC CHSL</option>
+                  <option>JKSSB</option>
+                  <option>Bank PO / Clerk</option>
+                </optgroup>
+                <optgroup label="University Entrance">
+                  <option>CUET UG</option>
+                  <option>CUET PG</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="field">
+              <label>Subject</label>
+              <select id="pyq_subject">
+                <option>Physics</option>
+                <option>Chemistry</option>
+                <option>Biology</option>
+                <option>Mathematics</option>
+                <option>English</option>
+                <option>General Studies</option>
+                <option>General Awareness</option>
+                <option>Reasoning</option>
+                <option>Full Paper (All Subjects)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Year</label>
+              <select id="pyq_year">
+                <option>2025</option>
+                <option>2024</option>
+                <option>2023</option>
+                <option>2022</option>
+                <option>2021</option>
+                <option>2020</option>
+                <option>Older</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Title</label>
+              <input type="text" id="pyq_title" placeholder="e.g. JEE Main 2024 — Physics Paper">
+            </div>
+          </div>
+          <div class="dropzone" id="pyqDropzone">
+            <strong>Tap to upload PDF</strong> or drag and drop<br>
+            Max file size 20MB
+            <input type="file" id="pyqFileInput" accept="application/pdf" style="display:none;">
+            <div id="pyqFileName" style="margin-top:8px; font-weight:700; color:var(--navy); display:none;"></div>
+          </div>
+          <button class="btn btn-primary" id="pyqUploadBtn">Upload PYQ</button>
+        </div>
+
+        <div class="table-card">
+          <table>
+            <thead><tr><th colspan="4">Uploaded Files</th></tr></thead>
+            <tbody>
+              <tr class="empty-row"><td colspan="4">No notes or PYQ papers uploaded yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== CUSTOMERS TAB ===== -->
+      <div class="tab-panel" id="tab-customers">
+        <div class="toolbar">
+          <input type="text" class="search-input" placeholder="Search by name, email, or phone...">
+        </div>
+        <div class="table-card">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Orders</th>
+                <th>Joined</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="empty-row"><td colspan="5">No registered customers yet. Once people sign up on Schitab, they'll appear here.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== ADD/EDIT BOOK MODAL ===== -->
+<div class="modal-overlay" id="bookModalOverlay">
+  <div class="modal">
+    <h3 id="modalTitle">Add Book</h3>
+    <div class="form-grid">
+      <div class="field full">
+        <label>Title</label>
+        <input type="text" id="m_title" placeholder="Book title">
+      </div>
+      <div class="field">
+        <label>Slug</label>
+        <input type="text" id="m_slug" placeholder="e.g. ncert-physics-12-part-1">
+      </div>
+      <div class="field">
+        <label>ISBN</label>
+        <input type="text" id="m_isbn" placeholder="ISBN (optional)">
+      </div>
+      <div class="field">
+        <label>Category</label>
+        <select id="m_category">
+          <option value="">Loading categories…</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Publisher</label>
+        <input type="text" id="m_publisher" placeholder="e.g. NCERT, S. Chand">
+      </div>
+      <div class="field">
+        <label>Your Price (₹)</label>
+        <input type="number" id="m_price" placeholder="0">
+      </div>
+      <div class="field">
+        <label>MRP (₹)</label>
+        <input type="number" id="m_mrp" placeholder="0">
+      </div>
+      <div class="field">
+        <label>Stock Quantity</label>
+        <input type="number" id="m_stock" placeholder="0">
+      </div>
+      <div class="field">
+        <label>Availability</label>
+        <select id="m_availability">
+          <option value="in_stock">In Stock</option>
+          <option value="preorder">Preorder (Ships in 3-4 days)</option>
+          <option value="out_of_stock">Out of Stock</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Cover Image URL</label>
+        <input type="text" id="m_cover" placeholder="https://...">
+      </div>
+      <div class="field full">
+        <label>Description</label>
+        <textarea id="m_description" rows="3" placeholder="Short description of the book"></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="modalCancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="modalSaveBtn">Save Book</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ===== ADMIN ACCESS GATE =====
+  const SUPABASE_URL = 'https://khhblggrzqnlcjfvwwhk.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_BfgZnaVfjyzy4xon-iD-Qw_EIpMlJzF';
+
+  function getSession() {
+    try {
+      const raw = localStorage.getItem('schitab_session');
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+  }
+
+  async function checkAdminAccess() {
+    const session = getSession();
+
+    // Not logged in at all — send to login
+    if (!session?.user?.id || !session?.access_token) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/profiles?id=eq.${session.user.id}&select=is_admin`,
+        {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': 'Bearer ' + session.access_token
+          }
+        }
+      );
+
+      if (!res.ok) throw new Error('Could not verify admin access (status ' + res.status + ')');
+
+      const rows = await res.json();
+      const isAdmin = rows?.[0]?.is_admin === true;
+
+      // Logged in, but not an admin — send back to the storefront
+      if (!isAdmin) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // Access granted — reveal the admin panel
+      document.getElementById('accessGateOverlay').remove();
+      document.getElementById('adminLayout').style.display = '';
+
+      // Now that we know this is a verified admin, load real data
+      loadCategories().catch(err => console.error('Categories failed to load:', err));
+      loadBooks();
+      loadOrdersAdmin();
+
+    } catch (err) {
+      console.error('Admin access check failed:', err);
+      window.location.href = 'index.html';
+    }
+  }
+
+  checkAdminAccess();
+
+  // ===== File upload (Notes & PYQ) =====
+  function wireDropzone(dropzoneId, fileInputId, fileNameId) {
+    const dropzone = document.getElementById(dropzoneId);
+    const fileInput = document.getElementById(fileInputId);
+    const fileNameEl = document.getElementById(fileNameId);
+
+    dropzone.addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        if (file.type !== 'application/pdf') {
+          alert('Please select a PDF file.');
+          fileInput.value = '';
+          fileNameEl.style.display = 'none';
+          return;
+        }
+        const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+        if (file.size > 20 * 1024 * 1024) {
+          alert(`This file is ${sizeMB}MB. Max allowed size is 20MB.`);
+          fileInput.value = '';
+          fileNameEl.style.display = 'none';
+          return;
+        }
+        fileNameEl.textContent = `✓ ${file.name} (${sizeMB}MB)`;
+        fileNameEl.style.display = 'block';
+      }
+    });
+  }
+
+  wireDropzone('notesDropzone', 'notesFileInput', 'notesFileName');
+  wireDropzone('pyqDropzone', 'pyqFileInput', 'pyqFileName');
+
+  document.getElementById('notesUploadBtn').addEventListener('click', () => {
+    const title = document.getElementById('notes_title').value.trim();
+    const file = document.getElementById('notesFileInput').files[0];
+    if (!title) { alert('Please enter a title for these notes.'); return; }
+    if (!file) { alert('Please select a PDF file to upload.'); return; }
+
+    const cls = document.getElementById('notes_class').value;
+    const subject = document.getElementById('notes_subject').value;
+
+    alert(`"${title}" (${cls} — ${subject}, ${file.name}) would be uploaded now.\n\n(This is a design preview — real file storage connects to Supabase Storage once hosting is set up.)`);
+  });
+
+  document.getElementById('pyqUploadBtn').addEventListener('click', () => {
+    const title = document.getElementById('pyq_title').value.trim();
+    const file = document.getElementById('pyqFileInput').files[0];
+    if (!title) { alert('Please enter a title for this paper.'); return; }
+    if (!file) { alert('Please select a PDF file to upload.'); return; }
+
+    const exam = document.getElementById('pyq_exam').value;
+    const year = document.getElementById('pyq_year').value;
+
+    alert(`"${title}" (${exam} ${year}, ${file.name}) would be uploaded now.\n\n(This is a design preview — real file storage connects to Supabase Storage once hosting is set up.)`);
+  });
+
+  // ===== Sidebar tab switching =====
+  const navItems = document.querySelectorAll('.nav-item');
+  const tabPanels = document.querySelectorAll('.tab-panel');
+  const pageTitle = document.getElementById('pageTitle');
+
+  const titles = {
+    dashboard: 'Dashboard',
+    books: 'Books',
+    notes: 'Notes & PYQs',
+    orders: 'Orders',
+    customers: 'Customers'
+  };
+
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      navItems.forEach(n => n.classList.remove('active'));
+      item.classList.add('active');
+      tabPanels.forEach(p => p.classList.remove('active'));
+      document.getElementById('tab-' + item.dataset.tab).classList.add('active');
+      pageTitle.textContent = titles[item.dataset.tab];
+    });
+  });
+
+  // ===== ADMIN DATA STATE =====
+  let CATEGORIES = [];
+  let BOOKS = [];
+  let ORDERS = [];
+
+  function authHeaders(extra = {}) {
+    const session = getSession();
+    return {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + session.access_token,
+      ...extra
+    };
+  }
+
+  // Escapes any value before it's interpolated into an innerHTML template.
+  // Without this, a customer typing something like <img src=x onerror=...>
+  // as their checkout name would have that markup executed as real HTML/JS
+  // the moment an admin views the Orders tab — a stored XSS attack.
+  // This converts it into inert, visible text instead.
+  function escapeHtml(value) {
+    if (value === null || value === undefined) return '';
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  // ----- CATEGORIES -----
+  async function loadCategories() {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/categories?select=id,name,slug,parent_id&order=name.asc`, {
+      headers: authHeaders()
+    });
+    if (!res.ok) throw new Error('Failed to load categories (status ' + res.status + ')');
+    CATEGORIES = await res.json();
+
+    document.getElementById('categoryFilterSelect').innerHTML =
+      '<option value="">All Categories</option>' +
+      CATEGORIES.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+
+    document.getElementById('m_category').innerHTML =
+      CATEGORIES.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+  }
+
+  // ----- BOOKS -----
+  function availabilityBadge(av) {
+    const map = {
+      in_stock: ['badge-instock', 'In Stock'],
+      preorder: ['badge-preorder', 'Preorder'],
+      out_of_stock: ['badge-out', 'Out of Stock']
+    };
+    const [cls, label] = map[av] || ['badge-out', av || 'Unknown'];
+    return `<span class="badge ${cls}">${label}</span>`;
+  }
+
+  function renderBooksTable() {
+    const tbody = document.getElementById('booksTableBody');
+    const search = document.getElementById('bookSearchInput').value.trim().toLowerCase();
+    const catFilter = document.getElementById('categoryFilterSelect').value;
+    const availFilter = document.getElementById('availabilityFilterSelect').value;
+
+    let rows = BOOKS;
+    if (search) {
+      rows = rows.filter(b =>
+        (b.title || '').toLowerCase().includes(search) ||
+        (b.categories?.name || '').toLowerCase().includes(search)
+      );
+    }
+    if (catFilter) rows = rows.filter(b => String(b.category_id) === catFilter);
+    if (availFilter) rows = rows.filter(b => b.availability === availFilter);
+
+    if (!rows.length) {
+      tbody.innerHTML = `<tr class="empty-row"><td colspan="6">No books match your filters.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = rows.map(b => `
+      <tr>
+        <td>
+          <div class="book-cell">
+            ${b.cover_url
+              ? `<img src="${escapeHtml(b.cover_url)}" alt="">`
+              : `<div style="width:32px;height:44px;border-radius:4px;background:var(--gold-soft);flex-shrink:0;"></div>`}
+            <div>
+              <div class="title">${escapeHtml(b.title)}</div>
+              <div class="meta">${escapeHtml(b.publisher)}${b.publisher && b.stock_quantity != null ? ' · ' : ''}${b.stock_quantity != null ? b.stock_quantity + ' in stock' : ''}</div>
+            </div>
+          </div>
+        </td>
+        <td>${escapeHtml(b.categories?.name) || '—'}</td>
+        <td>₹${b.price}</td>
+        <td>₹${b.mrp}</td>
+        <td>${availabilityBadge(b.availability)}</td>
+        <td>
+          <div class="row-actions">
+            <div class="icon-action edit-book" title="Edit" data-id="${b.id}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </div>
+            <div class="icon-action danger delete-row" title="Delete" data-id="${b.id}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </div>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  async function loadBooks() {
+    const tbody = document.getElementById('booksTableBody');
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="6">Loading books…</td></tr>`;
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/books?select=*,categories(name)&order=id.desc`, {
+        headers: authHeaders()
+      });
+      if (!res.ok) throw new Error('Failed to load books (status ' + res.status + ')');
+      BOOKS = await res.json();
+      renderBooksTable();
+    } catch (err) {
+      tbody.innerHTML = `<tr class="empty-row"><td colspan="6">Couldn't load books: ${err.message}</td></tr>`;
+    }
+  }
+
+  document.getElementById('bookSearchInput').addEventListener('input', renderBooksTable);
+  document.getElementById('categoryFilterSelect').addEventListener('change', renderBooksTable);
+  document.getElementById('availabilityFilterSelect').addEventListener('change', renderBooksTable);
+
+  // ----- ADD/EDIT BOOK MODAL -----
+  const modalOverlay = document.getElementById('bookModalOverlay');
+  const modalTitle = document.getElementById('modalTitle');
+  let editingBookId = null;
+
+  function slugify(str) {
+    return str.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  }
+
+  function openModal(editMode, book) {
+    editingBookId = editMode ? book.id : null;
+    modalTitle.textContent = editMode ? 'Edit Book' : 'Add Book';
+
+    if (editMode && book) {
+      document.getElementById('m_title').value = book.title || '';
+      document.getElementById('m_slug').value = book.slug || '';
+      document.getElementById('m_isbn').value = book.isbn || '';
+      document.getElementById('m_publisher').value = book.publisher || '';
+      document.getElementById('m_price').value = book.price ?? '';
+      document.getElementById('m_mrp').value = book.mrp ?? '';
+      document.getElementById('m_stock').value = book.stock_quantity ?? '';
+      document.getElementById('m_availability').value = book.availability || 'in_stock';
+      document.getElementById('m_cover').value = book.cover_url || '';
+      document.getElementById('m_description').value = book.description || '';
+
+      // Set category after a short delay to ensure the dropdown is populated
+      // Categories load async on page load — if dropdown is empty when we set
+      // the value, the selection silently fails, which is exactly the bug we saw.
+      const setCat = () => {
+        const sel = document.getElementById('m_category');
+        if (sel.options.length > 0 && book.category_id != null) {
+          sel.value = String(book.category_id);
+        } else if (book.category_id != null) {
+          // Categories still loading — retry once after 500ms
+          setTimeout(() => { sel.value = String(book.category_id); }, 500);
+        }
+      };
+      setCat();
+
+    } else {
+      document.querySelectorAll('.modal input, .modal textarea').forEach(i => i.value = '');
+      document.getElementById('m_availability').value = 'in_stock';
+      document.getElementById('m_category').selectedIndex = 0;
+    }
+    modalOverlay.classList.add('open');
+  }
+
+  document.getElementById('addBookBtn').addEventListener('click', () => openModal(false));
+  document.getElementById('modalCancelBtn').addEventListener('click', () => modalOverlay.classList.remove('open'));
+  modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) modalOverlay.classList.remove('open'); });
+
+  // Auto-suggest a slug from the title for new books only — never overwrites on edit
+  document.getElementById('m_title').addEventListener('blur', () => {
+    const slugEl = document.getElementById('m_slug');
+    if (!editingBookId && !slugEl.value.trim()) {
+      slugEl.value = slugify(document.getElementById('m_title').value);
+    }
+  });
+
+  document.getElementById('modalSaveBtn').addEventListener('click', async () => {
+    const title = document.getElementById('m_title').value.trim();
+    const slug = document.getElementById('m_slug').value.trim();
+    if (!title) { alert('Please enter a book title.'); return; }
+    if (!slug) { alert('Please enter a slug (used in the book URL and cart).'); return; }
+
+    const categoryVal = document.getElementById('m_category').value;
+
+    const payload = {
+      title,
+      slug,
+      isbn: document.getElementById('m_isbn').value.trim() || null,
+      category_id: categoryVal ? Number(categoryVal) : null,
+      publisher: document.getElementById('m_publisher').value.trim() || null,
+      price: Number(document.getElementById('m_price').value) || 0,
+      mrp: Number(document.getElementById('m_mrp').value) || 0,
+      stock_quantity: Number(document.getElementById('m_stock').value) || 0,
+      availability: document.getElementById('m_availability').value,
+      cover_url: document.getElementById('m_cover').value.trim() || null,
+      description: document.getElementById('m_description').value.trim() || null
+    };
+
+    const saveBtn = document.getElementById('modalSaveBtn');
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving...';
+
+    try {
+      let res;
+      if (editingBookId) {
+        res = await fetch(`${SUPABASE_URL}/rest/v1/books?id=eq.${editingBookId}`, {
+          method: 'PATCH',
+          headers: authHeaders({ 'Content-Type': 'application/json', 'Prefer': 'return=representation' }),
+          body: JSON.stringify(payload)
+        });
+      } else {
+        res = await fetch(`${SUPABASE_URL}/rest/v1/books`, {
+          method: 'POST',
+          headers: authHeaders({ 'Content-Type': 'application/json', 'Prefer': 'return=representation' }),
+          body: JSON.stringify(payload)
+        });
+      }
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.message || ('Save failed (status ' + res.status + ')'));
+      }
+
+      modalOverlay.classList.remove('open');
+      await loadBooks();
+
+    } catch (err) {
+      alert('Could not save book: ' + err.message +
+            '\n\nIf this is a 401/403 error, your Supabase RLS policies likely don\'t yet allow admin writes to the books table.');
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Save Book';
+    }
+  });
+
+  // Edit/Delete — delegated, since book rows are re-rendered dynamically
+  document.getElementById('booksTableBody').addEventListener('click', async (e) => {
+    const editBtn = e.target.closest('.edit-book');
+    const delBtn = e.target.closest('.delete-row');
+
+    if (editBtn) {
+      const book = BOOKS.find(b => String(b.id) === editBtn.dataset.id);
+      if (book) openModal(true, book);
+    }
+
+    if (delBtn) {
+      const book = BOOKS.find(b => String(b.id) === delBtn.dataset.id);
+      if (!book) return;
+      if (!confirm(`Remove "${book.title}" from the catalog? This cannot be undone.`)) return;
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/books?id=eq.${book.id}`, {
+          method: 'DELETE',
+          headers: authHeaders()
+        });
+        if (!res.ok) throw new Error('Delete failed (status ' + res.status + ')');
+        await loadBooks();
+      } catch (err) {
+        alert('Could not delete book: ' + err.message +
+              '\n\nIf this is a 401/403 error, your Supabase RLS policies likely don\'t yet allow admin deletes on the books table.');
+      }
+    }
+  });
+
+  // ----- ORDERS -----
+  function orderStatusBadgeClass(status) {
+    const map = {
+      placed: 'badge-placed', packed: 'badge-packed', shipped: 'badge-shipped',
+      delivered: 'badge-delivered', cancelled: 'badge-cancelled'
+    };
+    return map[status] || 'badge-placed';
+  }
+
+  function renderOrdersTable() {
+    const tbody = document.getElementById('ordersTableBody');
+    const search = document.getElementById('orderSearchInput').value.trim().toLowerCase();
+    const statusFilter = document.getElementById('orderStatusFilterSelect').value;
+
+    let rows = ORDERS;
+    if (search) {
+      rows = rows.filter(o =>
+        String(o.order_number || '').toLowerCase().includes(search) ||
+        (o.addresses?.full_name || '').toLowerCase().includes(search)
+      );
+    }
+    if (statusFilter) rows = rows.filter(o => o.status === statusFilter);
+
+    if (!rows.length) {
+      tbody.innerHTML = `<tr class="empty-row"><td colspan="7">No orders match your filters.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = rows.map(o => {
+      const itemCount = (o.order_items || []).length;
+      const placedDate = o.created_at
+        ? new Date(o.created_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })
+        : '—';
+
+      return `
+        <tr>
+          <td style="font-weight:800">#${escapeHtml(o.order_number)}</td>
+          <td>${escapeHtml(o.addresses?.full_name) || '—'}<br><span style="color:var(--text-muted); font-size:11.5px">${escapeHtml(o.addresses?.phone)}</span></td>
+          <td>${itemCount} book${itemCount === 1 ? '' : 's'}</td>
+          <td style="font-weight:800">₹${Math.round(parseFloat(o.total_amount) || 0)}</td>
+          <td>
+            ${escapeHtml((o.payment_method || '—').toUpperCase())}<br>
+            <span style="color:var(--text-muted); font-size:11px">${escapeHtml(o.payment_status)}</span>
+          </td>
+          <td>
+            <select class="status-select" data-order-id="${o.id}">
+              <option value="placed" ${o.status === 'placed' ? 'selected' : ''}>Placed</option>
+              <option value="packed" ${o.status === 'packed' ? 'selected' : ''}>Packed</option>
+              <option value="shipped" ${o.status === 'shipped' ? 'selected' : ''}>Shipped</option>
+              <option value="delivered" ${o.status === 'delivered' ? 'selected' : ''}>Delivered</option>
+              <option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+            </select>
+          </td>
+          <td style="color:var(--text-muted); font-size:12px">${placedDate}</td>
+        </tr>`;
+    }).join('');
+  }
+
+  async function loadOrdersAdmin() {
+    const tbody = document.getElementById('ordersTableBody');
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="7">Loading orders…</td></tr>`;
+    try {
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/orders?select=*,addresses(full_name,phone),order_items(quantity)&order=created_at.desc`,
+        { headers: authHeaders() }
+      );
+      if (!res.ok) throw new Error('Failed to load orders (status ' + res.status + ')');
+      ORDERS = await res.json();
+      renderOrdersTable();
+    } catch (err) {
+      tbody.innerHTML = `<tr class="empty-row"><td colspan="7">Couldn't load orders: ${err.message}</td></tr>`;
+    }
+  }
+
+  document.getElementById('ordersTableBody').addEventListener('change', async (e) => {
+    const sel = e.target.closest('.status-select');
+    if (!sel) return;
+    const orderId = sel.dataset.orderId;
+    const newStatus = sel.value;
+
+    sel.disabled = true;
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/orders?id=eq.${orderId}`, {
+        method: 'PATCH',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (!res.ok) throw new Error('Status update failed (status ' + res.status + ')');
+
+      const order = ORDERS.find(o => String(o.id) === orderId);
+      if (order) order.status = newStatus;
+
+    } catch (err) {
+      alert('Could not update order status: ' + err.message +
+            '\n\nIf this is a 401/403 error, your Supabase RLS policies likely don\'t yet allow admin updates to the orders table.');
+      renderOrdersTable(); // revert dropdown to last known value
+    } finally {
+      sel.disabled = false;
+    }
+  });
+
+  document.getElementById('orderSearchInput').addEventListener('input', renderOrdersTable);
+  document.getElementById('orderStatusFilterSelect').addEventListener('change', renderOrdersTable);
+</script>
+
+</body>
+</html>

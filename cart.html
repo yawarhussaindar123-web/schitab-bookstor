@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Cart — Schitab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FBF9F4;
+    --white: #FFFFFF;
+    --navy: #1B2A4A;
+    --navy-light: #2E4270;
+    --gold: #C9A227;
+    --gold-soft: #F4E8C1;
+    --text-muted: #6B7280;
+    --border: #E8E4DA;
+    --green: #1F7A4D;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--navy);
+    -webkit-font-smoothing: antialiased;
+    font-weight: 500;
+  }
+
+  a { text-decoration: none; color: inherit; }
+
+  /* ===== HEADER ===== */
+  header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-weight: 800;
+    font-size: 28px;
+    color: var(--navy);
+    letter-spacing: -0.5px;
+  }
+
+  .logo span { color: var(--gold); }
+
+  .continue-link {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* ===== PAGE LAYOUT ===== */
+  .page-title-bar {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 20px 8px;
+  }
+
+  .page-title-bar h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(24px, 4vw, 32px);
+    font-weight: 700;
+  }
+
+  .page-title-bar p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .cart-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 20px 60px;
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 28px;
+    align-items: start;
+  }
+
+  @media (max-width: 800px) {
+    .cart-wrap { grid-template-columns: 1fr; }
+  }
+
+  /* ===== ITEMS LIST ===== */
+  .items-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .cart-row {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cart-row:last-child { border-bottom: none; }
+
+  .cart-row img {
+    width: 64px;
+    height: 86px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: var(--gold-soft);
+    flex-shrink: 0;
+  }
+
+  .cart-row-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .cart-row-category {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--gold);
+  }
+
+  .cart-row-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.35;
+  }
+
+  .cart-row-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .cart-row-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .qty-box {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .qty-box button {
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: var(--cream);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    cursor: pointer;
+  }
+
+  .qty-box span {
+    width: 34px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .cart-row-price {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--navy);
+    text-align: right;
+  }
+
+  .cart-row-price .each {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-align: right;
+  }
+
+  .remove-btn {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-decoration: underline;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .remove-btn:hover { color: #b91c1c; }
+
+  /* ===== EMPTY STATE ===== */
+  .cart-empty {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    text-align: center;
+    padding: 60px 24px;
+  }
+
+  .cart-empty .icon {
+    font-size: 40px;
+    margin-bottom: 12px;
+    opacity: 0.4;
+  }
+
+  .cart-empty h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+
+  .cart-empty p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+
+  .cart-empty .btn {
+    display: inline-block;
+    padding: 12px 28px;
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  /* ===== SUMMARY CARD ===== */
+  .summary-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    position: sticky;
+    top: 90px;
+  }
+
+  @media (max-width: 800px) { .summary-card { position: static; } }
+
+  .summary-card h3 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 16px;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13.5px;
+    margin-bottom: 10px;
+    color: var(--text-muted);
+  }
+
+  .summary-row span:last-child {
+    color: var(--navy);
+    font-weight: 600;
+  }
+
+  .summary-row.discount span:last-child { color: var(--green); }
+
+  .summary-divider {
+    border-top: 1px solid var(--border);
+    margin: 14px 0;
+  }
+
+  .summary-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 18px;
+  }
+
+  .delivery-note {
+    font-size: 12px;
+    color: var(--text-muted);
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .checkout-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .checkout-btn:hover { background: var(--navy-light); }
+  .checkout-btn:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; }
+
+  .whatsapp-btn {
+    width: 100%;
+    padding: 13px;
+    border-radius: 10px;
+    border: 1.5px solid var(--navy);
+    background: var(--white);
+    color: var(--navy);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.2s;
+  }
+  .whatsapp-btn:hover { background: var(--gold-soft); }
+  .whatsapp-btn:disabled { border-color: var(--border); color: var(--text-muted); cursor: not-allowed; }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--navy);
+    color: var(--white);
+    text-align: center;
+    padding: 28px 20px;
+    font-size: 13px;
+    opacity: 0.75;
+  }
+
+  footer .logo-foot {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+
+  footer .logo-foot span { color: var(--gold); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo">Schi<span>tab</span></a>
+    <a href="index.html" class="continue-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+      Continue Shopping
+    </a>
+  </div>
+</header>
+
+<div class="page-title-bar">
+  <h1>Your Cart</h1>
+  <p id="itemCountText">3 items</p>
+</div>
+
+<main class="cart-wrap">
+
+  <!-- ITEMS -->
+  <div id="itemsContainer" class="items-card">
+    <!-- Rows are rendered dynamically from localStorage cart -->
+  </div>
+
+  <!-- EMPTY STATE (hidden by default, shown via JS if cart becomes empty) -->
+  <div id="emptyState" class="cart-empty" style="display:none;">
+    <div class="icon">🛒</div>
+    <h3>Your cart is empty</h3>
+    <p>Looks like you haven't added any books yet.</p>
+    <a href="index.html" class="btn">Browse Books</a>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="summary-card">
+    <h3>Order Summary</h3>
+    <div class="summary-row">
+      <span>Subtotal</span>
+      <span id="subtotalVal">₹295</span>
+    </div>
+    <div class="summary-row">
+      <span>Delivery</span>
+      <span id="deliveryVal">₹40</span>
+    </div>
+    <div class="summary-divider"></div>
+    <div class="summary-total">
+      <span>Total</span>
+      <span id="totalVal">₹335</span>
+    </div>
+    <div class="delivery-note">
+      Delivery charges are calculated at checkout based on your address and order weight. Free delivery may apply above a minimum order value.
+    </div>
+    <button class="checkout-btn" id="checkoutBtn">Proceed to Checkout</button>
+    <button class="whatsapp-btn" id="whatsappBtn">Order via WhatsApp instead</button>
+  </div>
+
+</main>
+
+<footer>
+  <div class="logo-foot">Schi<span>tab</span></div>
+  <div>Reban, Kashmir · Order via WhatsApp</div>
+</footer>
+
+<script>
+  // Same catalog data as index.html — kept in sync manually for now.
+  // Once hosted, both pages will fetch this from Supabase instead.
+  const BOOKS = {
+    "ncert-physics-12-part-1": { title: "NCERT Physics Class 12 Part 1", price: 75, category: "NCERT Books", cover: "https://covers.openlibrary.org/b/id/8738319-L.jpg", meta: "In Stock · Ships in 1-2 days" },
+    "ncert-physics-12-part-2": { title: "NCERT Physics Class 12 Part 2", price: 70, category: "NCERT Books", cover: "https://covers.openlibrary.org/b/id/11559674-L.jpg", meta: "In Stock · Ships in 1-2 days" },
+    "ncert-chemistry-12-part-1": { title: "NCERT Chemistry Class 12 Part 1", price: 80, category: "NCERT Books", cover: "https://covers.openlibrary.org/b/id/11396271-L.jpg", meta: "In Stock · Ships in 1-2 days" },
+    "ncert-biology-12": { title: "NCERT Biology Class 12", price: 95, category: "NCERT Books", cover: "https://covers.openlibrary.org/b/id/10468634-L.jpg", meta: "In Stock · Ships in 1-2 days" },
+    "ncert-maths-12-part-1": { title: "NCERT Mathematics Class 12 Part 1", price: 70, category: "NCERT Books", cover: null, meta: "On Order · 3-4 days" }
+  };
+
+  function loadCart() {
+    try {
+      const raw = localStorage.getItem('schitab_cart');
+      return raw ? JSON.parse(raw) : [];
+    } catch { return []; }
+  }
+  function saveCart(cart) {
+    localStorage.setItem('schitab_cart', JSON.stringify(cart));
+  }
+
+  function renderRows() {
+    const cart = loadCart();
+    itemsContainer.innerHTML = '';
+
+    cart.forEach(item => {
+      const book = BOOKS[item.slug];
+      if (!book) return;
+
+      const row = document.createElement('div');
+      row.className = 'cart-row';
+      row.dataset.slug = item.slug;
+      row.dataset.price = book.price;
+
+      const coverHtml = book.cover
+        ? `<img src="${book.cover}" alt="${book.title}">`
+        : `<div style="width:64px;height:86px;border-radius:8px;background:var(--gold-soft);flex-shrink:0;"></div>`;
+
+      row.innerHTML = `
+        ${coverHtml}
+        <div class="cart-row-info">
+          <div class="cart-row-category">${book.category}</div>
+          <div class="cart-row-title">${book.title}</div>
+          <div class="cart-row-meta">${book.meta}</div>
+          <div class="cart-row-bottom">
+            <div class="qty-box">
+              <button class="dec">−</button>
+              <span class="qty">${item.qty}</span>
+              <button class="inc">+</button>
+            </div>
+            <div class="cart-row-price">
+              <span class="line-total">₹${book.price * item.qty}</span>
+              <span class="each">₹${book.price} each</span>
+            </div>
+          </div>
+          <button class="remove-btn">Remove</button>
+        </div>`;
+      itemsContainer.appendChild(row);
+    });
+
+    recalc();
+  }
+
+  function updateCartQty(slug, delta) {
+    let cart = loadCart();
+    const item = cart.find(i => i.slug === slug);
+    if (!item) return;
+    item.qty += delta;
+    if (item.qty <= 0) cart = cart.filter(i => i.slug !== slug);
+    saveCart(cart);
+    renderRows();
+  }
+
+  function removeFromCart(slug) {
+    let cart = loadCart().filter(i => i.slug !== slug);
+    saveCart(cart);
+    renderRows();
+  }
+
+  const itemsContainer = document.getElementById('itemsContainer');
+  const emptyState = document.getElementById('emptyState');
+  const itemCountText = document.getElementById('itemCountText');
+  const subtotalVal = document.getElementById('subtotalVal');
+  const deliveryVal = document.getElementById('deliveryVal');
+  const totalVal = document.getElementById('totalVal');
+  const checkoutBtn = document.getElementById('checkoutBtn');
+  const whatsappBtn = document.getElementById('whatsappBtn');
+
+  // Flat placeholder delivery charge for this preview.
+  // Real calculation (pincode/weight-based) comes when we build checkout.
+  const DELIVERY_CHARGE = 40;
+  const FREE_DELIVERY_THRESHOLD = 500;
+
+  function recalc() {
+    const rows = itemsContainer.querySelectorAll('.cart-row');
+
+    if (rows.length === 0) {
+      itemsContainer.style.display = 'none';
+      emptyState.style.display = 'block';
+      itemCountText.textContent = '0 items';
+      checkoutBtn.disabled = true;
+      whatsappBtn.disabled = true;
+      subtotalVal.textContent = '₹0';
+      deliveryVal.textContent = '₹0';
+      totalVal.textContent = '₹0';
+      return;
+    }
+
+    itemsContainer.style.display = 'block';
+    emptyState.style.display = 'none';
+    checkoutBtn.disabled = false;
+    whatsappBtn.disabled = false;
+
+    let subtotal = 0;
+    let totalQty = 0;
+
+    rows.forEach(row => {
+      const price = parseFloat(row.dataset.price);
+      const qty = parseInt(row.querySelector('.qty').textContent);
+      const lineTotal = price * qty;
+      row.querySelector('.line-total').textContent = '₹' + lineTotal;
+      subtotal += lineTotal;
+      totalQty += qty;
+    });
+
+    const delivery = subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_CHARGE;
+    const total = subtotal + delivery;
+
+    itemCountText.textContent = totalQty + (totalQty === 1 ? ' item' : ' items');
+    subtotalVal.textContent = '₹' + subtotal;
+    deliveryVal.textContent = delivery === 0 ? 'Free' : '₹' + delivery;
+    totalVal.textContent = '₹' + total;
+  }
+
+  itemsContainer.addEventListener('click', (e) => {
+    const row = e.target.closest('.cart-row');
+    if (!row) return;
+    const slug = row.dataset.slug;
+
+    if (e.target.classList.contains('inc')) {
+      updateCartQty(slug, 1);
+    }
+    if (e.target.classList.contains('dec')) {
+      updateCartQty(slug, -1);
+    }
+    if (e.target.classList.contains('remove-btn')) {
+      removeFromCart(slug);
+    }
+  });
+
+  checkoutBtn.addEventListener('click', () => {
+    window.location.href = 'checkout.html';
+  });
+
+  whatsappBtn.addEventListener('click', () => {
+    let message = "Hi Schitab! I'd like to order:\n\n";
+    let total = 0;
+    itemsContainer.querySelectorAll('.cart-row').forEach(row => {
+      const title = row.querySelector('.cart-row-title').textContent;
+      const qty = row.querySelector('.qty').textContent;
+      const lineTotal = row.querySelector('.line-total').textContent;
+      total += parseFloat(lineTotal.replace('₹',''));
+      message += `• ${title} x${qty} — ${lineTotal}\n`;
+    });
+    message += `\nSubtotal: ₹${total}`;
+    const encoded = encodeURIComponent(message);
+    const WHATSAPP_NUMBER = '916006839411';
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`, '_blank');
+  });
+
+  renderRows();
+</script>
+
+</body>
+</html>

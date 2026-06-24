@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCERT Physics Class 12 Part 1 — Schitab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FBF9F4;
+    --white: #FFFFFF;
+    --navy: #1B2A4A;
+    --navy-light: #2E4270;
+    --gold: #C9A227;
+    --gold-soft: #F4E8C1;
+    --text-muted: #6B7280;
+    --border: #E8E4DA;
+    --green: #1F7A4D;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--navy);
+    -webkit-font-smoothing: antialiased;
+    font-weight: 500;
+  }
+
+  a { text-decoration: none; color: inherit; }
+
+  /* ===== HEADER ===== */
+  header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-weight: 800;
+    font-size: 28px;
+    color: var(--navy);
+    letter-spacing: -0.5px;
+    white-space: nowrap;
+  }
+
+  .logo span { color: var(--gold); }
+
+  .search-bar {
+    flex: 1;
+    max-width: 480px;
+    display: flex;
+    align-items: center;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 10px 18px;
+  }
+
+  .search-bar input {
+    border: none;
+    background: none;
+    outline: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    width: 100%;
+    color: var(--navy);
+  }
+
+  .search-bar svg { flex-shrink: 0; margin-right: 8px; opacity: 0.5; }
+
+  .header-actions {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    position: relative;
+  }
+
+  .cart-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: var(--gold);
+    color: var(--navy);
+    font-size: 10px;
+    font-weight: 700;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    border: 2px solid var(--white);
+  }
+
+  /* ===== BREADCRUMB ===== */
+  .breadcrumb {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px 20px 0;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .breadcrumb a { color: var(--text-muted); }
+  .breadcrumb a:hover { color: var(--navy); }
+  .breadcrumb .sep { margin: 0 6px; opacity: 0.5; }
+  .breadcrumb .current { color: var(--navy); font-weight: 600; }
+
+  /* ===== PRODUCT LAYOUT ===== */
+  .product-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 20px 60px;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 40px;
+  }
+
+  @media (max-width: 800px) {
+    .product-wrap { grid-template-columns: 1fr; gap: 24px; }
+  }
+
+  /* ----- Cover column ----- */
+  .cover-col {
+    position: sticky;
+    top: 90px;
+    align-self: start;
+  }
+
+  @media (max-width: 800px) { .cover-col { position: static; } }
+
+  .cover-frame {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 3/4;
+    overflow: hidden;
+  }
+
+  .cover-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .cover-fallback {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    color: var(--navy);
+    text-align: center;
+    font-size: 18px;
+  }
+
+  /* ----- Info column ----- */
+  .info-col { display: flex; flex-direction: column; gap: 14px; }
+
+  .product-category {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gold);
+  }
+
+  .product-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: clamp(20px, 3.5vw, 28px);
+    font-weight: 800;
+    line-height: 1.3;
+    color: var(--navy);
+  }
+
+  .product-meta {
+    font-size: 13px;
+    color: var(--text-muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+  }
+
+  .product-meta b { color: var(--navy); font-weight: 600; }
+
+  /* Rating row */
+  .rating-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .stars { color: var(--border); font-size: 16px; letter-spacing: 1px; }
+
+  /* Price block */
+  .price-block {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .price-now {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--navy);
+  }
+
+  .price-mrp {
+    font-size: 15px;
+    color: var(--text-muted);
+    text-decoration: line-through;
+  }
+
+  .price-discount {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--green);
+  }
+
+  .stock-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot.in-stock { background: var(--green); }
+  .dot.preorder { background: var(--gold); }
+
+  .delivery-est {
+    font-size: 13px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Quantity selector */
+  .qty-selector {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .qty-selector .label { font-size: 13px; font-weight: 600; color: var(--navy); }
+
+  .qty-box {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .qty-box button {
+    width: 34px;
+    height: 34px;
+    border: none;
+    background: var(--cream);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy);
+    cursor: pointer;
+  }
+
+  .qty-box span {
+    width: 36px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  /* CTA buttons */
+  .cta-row { display: flex; gap: 12px; }
+
+  .btn {
+    flex: 1;
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, opacity 0.2s;
+    text-align: center;
+  }
+
+  .btn-outline {
+    background: var(--white);
+    color: var(--navy);
+    border: 1.5px solid var(--navy);
+  }
+  .btn-outline:hover { background: var(--gold-soft); }
+
+  .btn-solid {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .btn-solid:hover { background: var(--navy-light); }
+
+  .wishlist-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .wishlist-btn.active svg { fill: var(--gold); stroke: var(--gold); }
+
+  /* Description / details */
+  .section-block {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+  }
+
+  .section-block h3 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 10px;
+  }
+
+  .section-block p {
+    font-size: 13.5px;
+    line-height: 1.7;
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 20px;
+    font-size: 13px;
+  }
+
+  .detail-grid div span:first-child {
+    color: var(--text-muted);
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+  }
+  .detail-grid div span:last-child { font-weight: 600; color: var(--navy); }
+
+  /* Reviews */
+  .review-empty {
+    text-align: center;
+    padding: 24px 12px;
+    color: var(--text-muted);
+    font-size: 13.5px;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--navy);
+    color: var(--white);
+    text-align: center;
+    padding: 28px 20px;
+    font-size: 13px;
+    opacity: 0.75;
+  }
+
+  footer .logo-foot {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+
+  footer .logo-foot span { color: var(--gold); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo">Schi<span>tab</span></a>
+    <div class="search-bar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" placeholder="Search for books, authors, exams...">
+    </div>
+    <div class="header-actions">
+      <div class="icon-btn" id="wishlistHeaderBtn" title="Wishlist">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B2A4A" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </div>
+      <div class="icon-btn" title="Cart">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B2A4A" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <span class="cart-badge">0</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="breadcrumb">
+  <a href="index.html">All Books</a>
+  <span class="sep">/</span>
+  <a href="index.html">NCERT Books</a>
+  <span class="sep">/</span>
+  <span class="current">NCERT Physics Class 12 Part 1</span>
+</div>
+
+<main class="product-wrap">
+
+  <!-- COVER -->
+  <div class="cover-col">
+    <div class="cover-frame">
+      <img src="https://covers.openlibrary.org/b/id/8738319-L.jpg" alt="NCERT Physics Class 12 Part 1"
+        onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'cover-fallback\'>NCERT Physics<br>Class 12 Part 1</div>'">
+    </div>
+  </div>
+
+  <!-- INFO -->
+  <div class="info-col">
+    <div class="product-category">NCERT Books</div>
+    <h1 class="product-title">NCERT Physics — Textbook for Class XII, Part 1</h1>
+
+    <div class="product-meta">
+      <span>Publisher: <b>NCERT</b></span>
+      <span>Language: <b>English</b></span>
+      <span>Edition: <b>2024-25</b></span>
+    </div>
+
+    <div class="rating-row">
+      <span class="stars">★★★★★</span>
+      <span>No ratings yet — be the first to review</span>
+    </div>
+
+    <div class="price-block">
+      <div class="price-row">
+        <span class="price-now">₹75</span>
+      </div>
+      <div class="stock-row">
+        <span class="dot in-stock"></span>
+        <span>In Stock</span>
+      </div>
+      <div class="delivery-est">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        Ships in 1-2 days · Delivered in 3-4 days to Kashmir
+      </div>
+    </div>
+
+    <div class="qty-selector">
+      <span class="label">Quantity</span>
+      <div class="qty-box">
+        <button id="qtyDec">−</button>
+        <span id="qtyVal">1</span>
+        <button id="qtyInc">+</button>
+      </div>
+    </div>
+
+    <div class="cta-row">
+      <button class="wishlist-btn" id="wishlistBtn" title="Add to wishlist">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B2A4A" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </button>
+      <button class="btn btn-outline" id="addToCartBtn">Add to Cart</button>
+      <button class="btn btn-solid" id="buyNowBtn">Buy Now</button>
+    </div>
+
+    <div class="section-block">
+      <h3>About this book</h3>
+      <p>
+        The official NCERT Physics textbook for Class XII, Part 1 — covering Electrostatics, Current Electricity,
+        Magnetic Effects of Current, and Electromagnetic Induction. Prescribed for CBSE and most state boards,
+        and a core reference for JEE and NEET preparation.
+      </p>
+    </div>
+
+    <div class="section-block">
+      <h3>Details</h3>
+      <div class="detail-grid">
+        <div><span>Publisher</span><span>NCERT</span></div>
+        <div><span>Language</span><span>English</span></div>
+        <div><span>Binding</span><span>Paperback</span></div>
+        <div><span>Pages</span><span>~280</span></div>
+        <div><span>Suitable for</span><span>CBSE, JKBOSE, JEE, NEET</span></div>
+        <div><span>Availability</span><span>Ships in 1-2 days</span></div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <h3>Reviews</h3>
+      <div class="review-empty">
+        No reviews yet for this book.<br>
+        Be the first to share your experience after your order is delivered.
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="logo-foot">Schi<span>tab</span></div>
+  <div>Reban, Kashmir · Order via WhatsApp</div>
+</footer>
+
+<script>
+  // ===== Quantity selector =====
+  let qty = 1;
+  const qtyVal = document.getElementById('qtyVal');
+  document.getElementById('qtyInc').addEventListener('click', () => {
+    qty++;
+    qtyVal.textContent = qty;
+  });
+  document.getElementById('qtyDec').addEventListener('click', () => {
+    if (qty > 1) qty--;
+    qtyVal.textContent = qty;
+  });
+
+  // ===== Wishlist toggle (visual only for now) =====
+  const wishlistBtn = document.getElementById('wishlistBtn');
+  wishlistBtn.addEventListener('click', () => {
+    wishlistBtn.classList.toggle('active');
+  });
+
+  // ===== Add to Cart / Buy Now (placeholder actions for this static mockup) =====
+  document.getElementById('addToCartBtn').addEventListener('click', () => {
+    alert(`Added ${qty} x "NCERT Physics Class 12 Part 1" to cart.\n\n(This is a design preview — real cart wiring comes when we connect the backend.)`);
+  });
+
+  document.getElementById('buyNowBtn').addEventListener('click', () => {
+    alert(`Proceeding to checkout with ${qty} x "NCERT Physics Class 12 Part 1".\n\n(This is a design preview — real checkout page comes next.)`);
+  });
+</script>
+
+</body>
+</html>
