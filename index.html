@@ -646,17 +646,6 @@
   // PREVIEW MODE: real data from your database, embedded directly
   // so this works as a plain file with no internet/hosting needed.
   // Once hosted live, this will be replaced with a live fetch.
-  const PREVIEW_BOOKS = [
-    { slug: "ncert-physics-12-part-1", title: "NCERT Physics Class 12 Part 1", price: 75, mrp: 75, publisher: "NCERT", availability: "in_stock", cover_url: "https://covers.openlibrary.org/b/id/8738319-L.jpg", categories: { id: "cat1", name: "NCERT Books" }, category_id: "cat1" },
-    { slug: "ncert-physics-12-part-2", title: "NCERT Physics Class 12 Part 2", price: 70, mrp: 70, publisher: "NCERT", availability: "in_stock", cover_url: "https://covers.openlibrary.org/b/id/11559674-L.jpg", categories: { id: "cat1", name: "NCERT Books" }, category_id: "cat1" },
-    { slug: "ncert-chemistry-12-part-1", title: "NCERT Chemistry Class 12 Part 1", price: 80, mrp: 80, publisher: "NCERT", availability: "in_stock", cover_url: "https://covers.openlibrary.org/b/id/11396271-L.jpg", categories: { id: "cat1", name: "NCERT Books" }, category_id: "cat1" },
-    { slug: "ncert-biology-12", title: "NCERT Biology Class 12", price: 95, mrp: 95, publisher: "NCERT", availability: "in_stock", cover_url: "https://covers.openlibrary.org/b/id/10468634-L.jpg", categories: { id: "cat1", name: "NCERT Books" }, category_id: "cat1" },
-    { slug: "ncert-maths-12-part-1", title: "NCERT Mathematics Class 12 Part 1", price: 70, mrp: 70, publisher: "NCERT", availability: "preorder", cover_url: null, categories: { id: "cat1", name: "NCERT Books" }, category_id: "cat1" }
-  ];
-  const PREVIEW_CATEGORIES = [
-    { id: "cat1", name: "NCERT Books" }
-  ];
-
   const grid = document.getElementById('grid');
   const catalogTitle = document.getElementById('catalogTitle');
   const catalogCount = document.getElementById('catalogCount');
@@ -777,11 +766,30 @@
 
   async function loadData() {
     showSkeletons();
-    // Tiny delay so the skeleton is visible (mimics real loading)
-    await new Promise(r => setTimeout(r, 400));
+    try {
+      // Fetch books and categories in parallel
+      const [booksRes, catsRes] = await Promise.all([
+        fetch(`${SUPABASE_URL}/rest/v1/books?select=*,categories(id,name)&is_active=eq.true&order=title.asc`, {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+        }),
+        fetch(`${SUPABASE_URL}/rest/v1/categories?select=id,name&order=name.asc`, {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+        })
+      ]);
 
-    allBooks = PREVIEW_BOOKS;
-    allCategories = PREVIEW_CATEGORIES;
+      if (!booksRes.ok) throw new Error('Could not load books (status ' + booksRes.status + ')');
+      if (!catsRes.ok) throw new Error('Could not load categories (status ' + catsRes.status + ')');
+
+      allBooks = await booksRes.json();
+      allCategories = await catsRes.json();
+
+    } catch (err) {
+      grid.innerHTML = `<div class="state-msg" style="grid-column:1/-1;color:#b91c1c;">
+        Could not load books right now. Please refresh and try again.<br>
+        <small style="color:#888">${err.message}</small>
+      </div>`;
+      return;
+    }
 
     renderCategories();
     renderBooks();
