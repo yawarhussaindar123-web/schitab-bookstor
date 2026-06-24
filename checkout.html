@@ -527,16 +527,6 @@
 </footer>
 
 <script>
-  // Same catalog data as index.html/cart.html — kept in sync manually for now.
-  // Once hosted, this will be fetched from Supabase instead.
-  const BOOKS = {
-    "ncert-physics-12-part-1": { title: "NCERT Physics Class 12 Part 1", price: 75 },
-    "ncert-physics-12-part-2": { title: "NCERT Physics Class 12 Part 2", price: 70 },
-    "ncert-chemistry-12-part-1": { title: "NCERT Chemistry Class 12 Part 1", price: 80 },
-    "ncert-biology-12": { title: "NCERT Biology Class 12", price: 95 },
-    "ncert-maths-12-part-1": { title: "NCERT Mathematics Class 12 Part 1", price: 70 }
-  };
-
   function loadCheckoutCart() {
     try {
       const raw = localStorage.getItem('schitab_cart');
@@ -547,24 +537,49 @@
   const CART = loadCheckoutCart();
   let SUBTOTAL = 0;
 
-  // Render line items + compute subtotal
-  (function renderOrderItems() {
+  // Render order items from real Supabase data
+  async function renderOrderItems() {
     const list = document.getElementById('orderItemsList');
     if (!CART.length) {
       list.innerHTML = `<div class="summary-item"><span class="name">Your cart is empty</span></div>`;
       return;
     }
-    CART.forEach(item => {
-      const book = BOOKS[item.slug];
-      if (!book) return;
-      const lineTotal = book.price * item.qty;
-      SUBTOTAL += lineTotal;
-      const row = document.createElement('div');
-      row.className = 'summary-item';
-      row.innerHTML = `<span class="name">${book.title} x${item.qty}</span><span class="val">₹${lineTotal}</span>`;
-      list.appendChild(row);
-    });
-  })();
+
+    const slugs = CART.map(i => i.slug);
+    const slugList = slugs.map(s => `"${s}"`).join(',');
+
+    try {
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/books?slug=in.(${slugList})&select=slug,title,price`,
+        { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
+      );
+      if (!res.ok) throw new Error('status ' + res.status);
+      const books = await res.json();
+      const bookMap = {};
+      books.forEach(b => { bookMap[b.slug] = b; });
+
+      SUBTOTAL = 0;
+      CART.forEach(item => {
+        const book = bookMap[item.slug];
+        if (!book) return;
+        const lineTotal = book.price * item.qty;
+        SUBTOTAL += lineTotal;
+        const row = document.createElement('div');
+        row.className = 'summary-item';
+        row.innerHTML = `<span class="name">${book.title} x${item.qty}</span><span class="val">₹${lineTotal}</span>`;
+        list.appendChild(row);
+      });
+
+      // Trigger delivery recalc now that SUBTOTAL is set
+      const stateEl = document.getElementById('addrState');
+      if (stateEl) calcDelivery(stateEl.value);
+
+    } catch (err) {
+      list.innerHTML = `<div class="summary-item"><span class="name" style="color:#b91c1c">Could not load order items. Please go back and try again.</span></div>`;
+    }
+  }
+
+  (async () => { await renderOrderItems(); })();
 
   // ===== CONFIG: Delivery charge rules =====
   // Adjust these freely — this is the only place delivery logic lives.
