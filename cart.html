@@ -436,15 +436,8 @@
 </footer>
 
 <script>
-  // Same catalog data as index.html — kept in sync manually for now.
-  // Once hosted, both pages will fetch this from Supabase instead.
-  const BOOKS = {
-    "ncert-physics-12-part-1": { title: "NCERT Physics Class 12 Part 1", price: 75, category: "NCERT Books", cover: "https://covers.openlibrary.org/b/id/8738319-L.jpg", meta: "In Stock · Ships in 1-2 days" },
-    "ncert-physics-12-part-2": { title: "NCERT Physics Class 12 Part 2", price: 70, category: "NCERT Books", cover: "https://covers.openlibrary.org/b/id/11559674-L.jpg", meta: "In Stock · Ships in 1-2 days" },
-    "ncert-chemistry-12-part-1": { title: "NCERT Chemistry Class 12 Part 1", price: 80, category: "NCERT Books", cover: "https://covers.openlibrary.org/b/id/11396271-L.jpg", meta: "In Stock · Ships in 1-2 days" },
-    "ncert-biology-12": { title: "NCERT Biology Class 12", price: 95, category: "NCERT Books", cover: "https://covers.openlibrary.org/b/id/10468634-L.jpg", meta: "In Stock · Ships in 1-2 days" },
-    "ncert-maths-12-part-1": { title: "NCERT Mathematics Class 12 Part 1", price: 70, category: "NCERT Books", cover: null, meta: "On Order · 3-4 days" }
-  };
+  const SUPABASE_URL = 'https://khhblggrzqnlcjfvwwhk.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_BfgZnaVfjyzy4xon-iD-Qw_EIpMlJzF';
 
   function loadCart() {
     try {
@@ -456,13 +449,59 @@
     localStorage.setItem('schitab_cart', JSON.stringify(cart));
   }
 
-  function renderRows() {
+  // Fetch real book data from Supabase for slugs currently in the cart
+  async function fetchBooksForCart(slugs) {
+    if (!slugs.length) return {};
+    const slugList = slugs.map(s => `"${s}"`).join(',');
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/books?slug=in.(${slugList})&select=slug,title,price,cover_url,availability,categories(name)`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
+    );
+    if (!res.ok) throw new Error('Could not load cart items (status ' + res.status + ')');
+    const books = await res.json();
+    // Convert to slug-keyed object for easy lookup
+    const map = {};
+    books.forEach(b => {
+      map[b.slug] = {
+        title: b.title,
+        price: b.price,
+        category: b.categories?.name || '',
+        cover: b.cover_url || null,
+        meta: b.availability === 'in_stock'
+          ? 'In Stock · Ships in 1-2 days'
+          : 'On Order · 3-4 days'
+      };
+    });
+    return map;
+  }
+
+  async function renderRows() {
     const cart = loadCart();
+    itemsContainer.innerHTML = '';
+
+    if (!cart.length) {
+      recalc();
+      return;
+    }
+
+    // Show loading state while fetching
+    itemsContainer.style.display = 'block';
+    emptyState.style.display = 'none';
+    itemsContainer.innerHTML = `<div style="padding:24px;text-align:center;color:var(--text-muted)">Loading cart...</div>`;
+
+    let BOOKS = {};
+    try {
+      BOOKS = await fetchBooksForCart(cart.map(i => i.slug));
+    } catch (err) {
+      itemsContainer.innerHTML = `<div style="padding:24px;text-align:center;color:#b91c1c">Could not load cart items. Please refresh.<br><small>${err.message}</small></div>`;
+      return;
+    }
+
     itemsContainer.innerHTML = '';
 
     cart.forEach(item => {
       const book = BOOKS[item.slug];
-      if (!book) return;
+      if (!book) return; // book was deleted from catalog — skip silently
 
       const row = document.createElement('div');
       row.className = 'cart-row';
@@ -498,20 +537,20 @@
     recalc();
   }
 
-  function updateCartQty(slug, delta) {
+  async function updateCartQty(slug, delta) {
     let cart = loadCart();
     const item = cart.find(i => i.slug === slug);
     if (!item) return;
     item.qty += delta;
     if (item.qty <= 0) cart = cart.filter(i => i.slug !== slug);
     saveCart(cart);
-    renderRows();
+    await renderRows();
   }
 
-  function removeFromCart(slug) {
+  async function removeFromCart(slug) {
     let cart = loadCart().filter(i => i.slug !== slug);
     saveCart(cart);
-    renderRows();
+    await renderRows();
   }
 
   const itemsContainer = document.getElementById('itemsContainer');
@@ -605,7 +644,7 @@
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`, '_blank');
   });
 
-  renderRows();
+  (async () => { await renderRows(); })();
 </script>
 
 </body>
