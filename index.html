@@ -713,13 +713,13 @@
         : '';
 
       card.innerHTML = `
-        <div class="card-cover">
+        <a href="product.html?slug=${book.slug}" class="card-cover">
           <span class="badge ${badgeClass}">${badgeText}</span>
           ${coverHtml}
-        </div>
+        </a>
         <div class="card-body">
           <div class="card-category">${book.categories ? book.categories.name : ''}</div>
-          <div class="card-title">${book.title}</div>
+          <a href="product.html?slug=${book.slug}" class="card-title" style="display:block;color:inherit;">${book.title}</a>
           <div class="card-author">${book.publisher || ''}</div>
           <div class="card-price-row">
             <span class="card-price">₹${book.price}</span>

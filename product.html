@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NCERT Physics Class 12 Part 1 — Schitab</title>
+<title id="pageTitle">Book — Schitab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -451,31 +451,26 @@
 <div class="breadcrumb">
   <a href="index.html">All Books</a>
   <span class="sep">/</span>
-  <a href="index.html">NCERT Books</a>
+  <a href="index.html" id="breadcrumbCategory">Books</a>
   <span class="sep">/</span>
-  <span class="current">NCERT Physics Class 12 Part 1</span>
+  <span class="current" id="breadcrumbTitle">Loading...</span>
 </div>
 
 <main class="product-wrap">
 
   <!-- COVER -->
   <div class="cover-col">
-    <div class="cover-frame">
-      <img src="https://covers.openlibrary.org/b/id/8738319-L.jpg" alt="NCERT Physics Class 12 Part 1"
-        onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'cover-fallback\'>NCERT Physics<br>Class 12 Part 1</div>'">
+    <div class="cover-frame" id="coverFrame">
+      <div class="cover-fallback" id="coverFallback">Loading...</div>
     </div>
   </div>
 
   <!-- INFO -->
   <div class="info-col">
-    <div class="product-category">NCERT Books</div>
-    <h1 class="product-title">NCERT Physics — Textbook for Class XII, Part 1</h1>
+    <div class="product-category" id="productCategory"></div>
+    <h1 class="product-title" id="productTitle">Loading book details...</h1>
 
-    <div class="product-meta">
-      <span>Publisher: <b>NCERT</b></span>
-      <span>Language: <b>English</b></span>
-      <span>Edition: <b>2024-25</b></span>
-    </div>
+    <div class="product-meta" id="productMeta"></div>
 
     <div class="rating-row">
       <span class="stars">★★★★★</span>
@@ -484,11 +479,12 @@
 
     <div class="price-block">
       <div class="price-row">
-        <span class="price-now">₹75</span>
+        <span class="price-now" id="productPrice">—</span>
+        <span class="price-mrp" id="productMrp" style="display:none;"></span>
       </div>
-      <div class="stock-row">
+      <div class="stock-row" id="stockRow">
         <span class="dot in-stock"></span>
-        <span>In Stock</span>
+        <span id="stockLabel">Checking availability...</span>
       </div>
       <div class="delivery-est">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
@@ -513,25 +509,14 @@
       <button class="btn btn-solid" id="buyNowBtn">Buy Now</button>
     </div>
 
-    <div class="section-block">
+    <div class="section-block" id="descriptionBlock" style="display:none;">
       <h3>About this book</h3>
-      <p>
-        The official NCERT Physics textbook for Class XII, Part 1 — covering Electrostatics, Current Electricity,
-        Magnetic Effects of Current, and Electromagnetic Induction. Prescribed for CBSE and most state boards,
-        and a core reference for JEE and NEET preparation.
-      </p>
+      <p id="productDescription"></p>
     </div>
 
     <div class="section-block">
       <h3>Details</h3>
-      <div class="detail-grid">
-        <div><span>Publisher</span><span>NCERT</span></div>
-        <div><span>Language</span><span>English</span></div>
-        <div><span>Binding</span><span>Paperback</span></div>
-        <div><span>Pages</span><span>~280</span></div>
-        <div><span>Suitable for</span><span>CBSE, JKBOSE, JEE, NEET</span></div>
-        <div><span>Availability</span><span>Ships in 1-2 days</span></div>
-      </div>
+      <div class="detail-grid" id="detailGrid"></div>
     </div>
 
     <div class="section-block">
@@ -551,32 +536,162 @@
 </footer>
 
 <script>
+  const SUPABASE_URL = 'https://khhblggrzqnlcjfvwwhk.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_BfgZnaVfjyzy4xon-iD-Qw_EIpMlJzF';
+
+  // ===== Cart helpers =====
+  function getCart() {
+    try { return JSON.parse(localStorage.getItem('schitab_cart') || '[]'); } catch { return []; }
+  }
+  function saveCart(cart) { localStorage.setItem('schitab_cart', JSON.stringify(cart)); }
+  function updateCartBadge() {
+    const total = getCart().reduce((s, i) => s + i.qty, 0);
+    const badge = document.querySelector('.cart-badge');
+    if (badge) badge.textContent = total;
+  }
+
   // ===== Quantity selector =====
   let qty = 1;
   const qtyVal = document.getElementById('qtyVal');
-  document.getElementById('qtyInc').addEventListener('click', () => {
-    qty++;
-    qtyVal.textContent = qty;
-  });
-  document.getElementById('qtyDec').addEventListener('click', () => {
-    if (qty > 1) qty--;
-    qtyVal.textContent = qty;
-  });
+  document.getElementById('qtyInc').addEventListener('click', () => { qty++; qtyVal.textContent = qty; });
+  document.getElementById('qtyDec').addEventListener('click', () => { if (qty > 1) { qty--; qtyVal.textContent = qty; } });
 
   // ===== Wishlist toggle (visual only for now) =====
-  const wishlistBtn = document.getElementById('wishlistBtn');
-  wishlistBtn.addEventListener('click', () => {
-    wishlistBtn.classList.toggle('active');
+  document.getElementById('wishlistBtn').addEventListener('click', function() {
+    this.classList.toggle('active');
   });
 
-  // ===== Add to Cart / Buy Now (placeholder actions for this static mockup) =====
+  // ===== Load book from Supabase by slug =====
+  let BOOK = null;
+
+  async function loadBook() {
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get('slug');
+
+    if (!slug) {
+      document.getElementById('productTitle').textContent = 'Book not found';
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/books?slug=eq.${slug}&select=*,categories(name)`,
+        { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
+      );
+      if (!res.ok) throw new Error('status ' + res.status);
+      const books = await res.json();
+      if (!books.length) throw new Error('Book not found');
+      BOOK = books[0];
+      renderBook(BOOK);
+    } catch (err) {
+      document.getElementById('productTitle').textContent = 'Could not load book details.';
+    }
+  }
+
+  function renderBook(book) {
+    // Page title
+    document.getElementById('pageTitle').textContent = `${book.title} — Schitab`;
+
+    // Breadcrumb
+    const catName = book.categories?.name || 'Books';
+    document.getElementById('breadcrumbCategory').textContent = catName;
+    document.getElementById('breadcrumbTitle').textContent = book.title;
+
+    // Cover
+    const coverFrame = document.getElementById('coverFrame');
+    if (book.cover_url) {
+      coverFrame.innerHTML = `<img src="${book.cover_url}" alt="${book.title}" onerror="this.style.display='none'">`;
+    } else {
+      coverFrame.innerHTML = `<div class="cover-fallback">${book.title}</div>`;
+    }
+
+    // Info
+    document.getElementById('productCategory').textContent = catName;
+    document.getElementById('productTitle').textContent = book.title;
+
+    // Meta
+    const metaParts = [];
+    if (book.publisher) metaParts.push(`Publisher: <b>${book.publisher}</b>`);
+    if (book.isbn) metaParts.push(`ISBN: <b>${book.isbn}</b>`);
+    document.getElementById('productMeta').innerHTML = metaParts.map(p => `<span>${p}</span>`).join('');
+
+    // Price
+    document.getElementById('productPrice').textContent = `₹${book.price}`;
+    const mrpEl = document.getElementById('productMrp');
+    if (book.mrp && book.mrp > book.price) {
+      mrpEl.textContent = `MRP ₹${book.mrp}`;
+      mrpEl.style.display = '';
+    }
+
+    // Stock
+    const stockLabel = document.getElementById('stockLabel');
+    const stockRow = document.getElementById('stockRow');
+    if (book.availability === 'out_of_stock') {
+      stockLabel.textContent = 'Out of Stock';
+      stockRow.querySelector('.dot').className = 'dot';
+      document.getElementById('addToCartBtn').disabled = true;
+      document.getElementById('buyNowBtn').disabled = true;
+    } else if (book.availability === 'preorder') {
+      stockLabel.textContent = 'Available for Preorder · Ships in 3-4 days';
+    } else {
+      stockLabel.textContent = 'In Stock';
+    }
+
+    // Description
+    if (book.description) {
+      document.getElementById('productDescription').textContent = book.description;
+      document.getElementById('descriptionBlock').style.display = '';
+    }
+
+    // Details grid
+    const details = [];
+    if (book.publisher) details.push(['Publisher', book.publisher]);
+    if (book.isbn) details.push(['ISBN', book.isbn]);
+    details.push(['Availability', book.availability === 'in_stock' ? 'Ships in 1-2 days' : book.availability === 'preorder' ? 'Preorder' : 'Out of Stock']);
+    if (book.stock_quantity != null) details.push(['In Stock', book.stock_quantity + ' copies']);
+    document.getElementById('detailGrid').innerHTML = details
+      .map(([label, val]) => `<div><span>${label}</span><span>${val}</span></div>`)
+      .join('');
+  }
+
+  // ===== Add to Cart =====
   document.getElementById('addToCartBtn').addEventListener('click', () => {
-    alert(`Added ${qty} x "NCERT Physics Class 12 Part 1" to cart.\n\n(This is a design preview — real cart wiring comes when we connect the backend.)`);
+    if (!BOOK) return;
+    const cart = getCart();
+    const existing = cart.find(i => i.slug === BOOK.slug);
+    if (existing) {
+      existing.qty += qty;
+    } else {
+      cart.push({ slug: BOOK.slug, qty });
+    }
+    saveCart(cart);
+    updateCartBadge();
+    document.getElementById('addToCartBtn').textContent = '✓ Added to Cart';
+    setTimeout(() => { document.getElementById('addToCartBtn').textContent = 'Add to Cart'; }, 2000);
   });
 
+  // ===== Buy Now =====
   document.getElementById('buyNowBtn').addEventListener('click', () => {
-    alert(`Proceeding to checkout with ${qty} x "NCERT Physics Class 12 Part 1".\n\n(This is a design preview — real checkout page comes next.)`);
+    if (!BOOK) return;
+    const cart = getCart();
+    const existing = cart.find(i => i.slug === BOOK.slug);
+    if (existing) {
+      existing.qty += qty;
+    } else {
+      cart.push({ slug: BOOK.slug, qty });
+    }
+    saveCart(cart);
+    window.location.href = 'checkout.html';
   });
+
+  // ===== Cart icon =====
+  document.querySelector('.icon-btn[title="Cart"]')?.addEventListener('click', () => {
+    window.location.href = 'cart.html';
+  });
+
+  // Init
+  updateCartBadge();
+  loadBook();
 </script>
 
 </body>
