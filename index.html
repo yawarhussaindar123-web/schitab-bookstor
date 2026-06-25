@@ -214,6 +214,8 @@
     justify-content: center;
     overflow: hidden;
     position: relative;
+    cursor: pointer;
+    text-decoration: none;
   }
 
   .card-cover img {
@@ -713,13 +715,13 @@
         : '';
 
       card.innerHTML = `
-        <a href="product.html?slug=${book.slug}" class="card-cover">
+        <div class="card-cover" onclick="window.location.href='product.html?slug=${book.slug}'" style="cursor:pointer;">
           <span class="badge ${badgeClass}">${badgeText}</span>
           ${coverHtml}
-        </a>
+        </div>
         <div class="card-body">
           <div class="card-category">${book.categories ? book.categories.name : ''}</div>
-          <a href="product.html?slug=${book.slug}" class="card-title" style="display:block;color:inherit;">${book.title}</a>
+          <div class="card-title" onclick="window.location.href='product.html?slug=${book.slug}'" style="cursor:pointer;">${book.title}</div>
           <div class="card-author">${book.publisher || ''}</div>
           <div class="card-price-row">
             <span class="card-price">₹${book.price}</span>
