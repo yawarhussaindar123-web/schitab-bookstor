@@ -617,7 +617,8 @@
       <span>Total</span>
       <span id="cartTotal">₹0</span>
     </div>
-    <button class="cart-checkout-btn" id="cartCheckoutBtn">Checkout on WhatsApp</button>
+    <button class="cart-checkout-btn" id="cartProceedBtn">Proceed to Checkout</button>
+    <button class="cart-checkout-btn" id="cartCheckoutBtn" style="background:var(--white);color:var(--navy);border:1.5px solid var(--navy);margin-top:8px;">Order via WhatsApp</button>
   </div>
 </div>
 
@@ -979,6 +980,12 @@
   cartBtn.addEventListener('click', openCart);
   cartClose.addEventListener('click', closeCart);
   cartOverlay.addEventListener('click', closeCart);
+
+  document.getElementById('cartProceedBtn').addEventListener('click', () => {
+    if (cart.length === 0) return;
+    closeCart();
+    window.location.href = 'checkout.html';
+  });
 
   cartCheckoutBtn.addEventListener('click', () => {
     if (cart.length === 0) return;
