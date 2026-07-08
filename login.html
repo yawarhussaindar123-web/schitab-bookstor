@@ -344,16 +344,6 @@
         <a href="#" class="forgot-link">Forgot password?</a>
         <button type="submit" class="submit-btn">Log In</button>
 
-        <div class="divider">or</div>
-        <button type="button" class="otp-btn" id="loginOtpBtn">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          Continue with OTP
-        </button>
-        <button type="button" class="google-btn">
-          <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.99.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-          Continue with Google
-        </button>
-
         <div class="terms-note">
           By continuing, you agree to Schitab's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
         </div>
@@ -386,42 +376,10 @@
         </div>
         <button type="submit" class="submit-btn">Create Account</button>
 
-        <div class="divider">or</div>
-        <button type="button" class="google-btn">
-          <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.99.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-          Sign up with Google
-        </button>
-
         <div class="terms-note">
           By creating an account, you agree to Schitab's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
         </div>
       </form>
-    </div>
-
-    <!-- ===== OTP / VERIFICATION SCREEN ===== -->
-    <div id="otpScreen" class="otp-screen">
-      <div class="auth-head">
-        <h1 id="otpTitle">Verify your number</h1>
-        <p id="otpSentTo">We've sent a 6-digit code to your phone</p>
-      </div>
-
-      <div class="otp-inputs">
-        <input type="text" maxlength="1" inputmode="numeric">
-        <input type="text" maxlength="1" inputmode="numeric">
-        <input type="text" maxlength="1" inputmode="numeric">
-        <input type="text" maxlength="1" inputmode="numeric">
-        <input type="text" maxlength="1" inputmode="numeric">
-        <input type="text" maxlength="1" inputmode="numeric">
-      </div>
-      <div class="field-error" id="otpError" style="text-align:center;">Incorrect code. Please try again.</div>
-
-      <button class="submit-btn" id="verifyOtpBtn">Verify &amp; Continue</button>
-
-      <div class="resend-note">
-        Didn't receive the code? <button id="resendBtn" disabled>Resend in <span id="resendTimer">30</span>s</button>
-      </div>
-
-      <span class="back-step" id="backToMain">← Back</span>
     </div>
 
   </div>
@@ -503,13 +461,6 @@
     } catch (err) {
       alert('Could not send reset email: ' + err.message);
     }
-  });
-
-  // ===== Google sign-in (both buttons) =====
-  document.querySelectorAll('.google-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      alert("This would open Google's sign-in popup to pick your account.\n\n(This is a design preview — real Google sign-in connects when we set up hosting + backend, since Google requires a live website address to work.)");
-    });
   });
 
   // ===== Tab switching =====
@@ -659,103 +610,6 @@
     }
   });
 
-  // ===== Phone OTP login (still a placeholder — needs a paid SMS provider) =====
-  const mainScreen = document.getElementById('mainScreen');
-  const otpScreen = document.getElementById('otpScreen');
-  const otpInputs = document.querySelectorAll('.otp-inputs input');
-  const otpError = document.getElementById('otpError');
-  const otpTitle = document.getElementById('otpTitle');
-  const otpSentTo = document.getElementById('otpSentTo');
-
-  let generatedCode = null;
-
-  function generateCode() {
-    return String(Math.floor(100000 + Math.random() * 900000));
-  }
-
-  function goToVerification(destination) {
-    generatedCode = generateCode();
-    otpTitle.textContent = 'Verify your number';
-    otpSentTo.textContent = `We've sent a 6-digit code to ${destination || 'your phone'}`;
-
-    mainScreen.style.display = 'none';
-    otpScreen.classList.add('active');
-    otpError.classList.remove('show');
-    otpInputs.forEach(i => i.value = '');
-    startResendTimer();
-    otpInputs[0].focus();
-
-    // Phone OTP needs a paid SMS provider (e.g. Twilio/MSG91) — not yet connected.
-    // Showing the code here so the flow can still be tested honestly.
-    alert(`(Phone OTP not connected yet — needs an SMS provider)\n\nYour verification code is: ${generatedCode}\n\nEnter this code to continue.`);
-  }
-
-  document.getElementById('loginOtpBtn').addEventListener('click', () => {
-    const idEl = document.getElementById('loginId');
-    if (!isValidPhone(idEl.value.trim())) {
-      showError(idEl, document.getElementById('loginIdError'), true);
-      document.getElementById('loginIdError').textContent = 'Enter your 10-digit phone number above to use OTP login.';
-      idEl.focus();
-      return;
-    }
-    showError(idEl, document.getElementById('loginIdError'), false);
-    goToVerification(idEl.value.trim());
-  });
-
-  document.getElementById('backToMain').addEventListener('click', () => {
-    otpScreen.classList.remove('active');
-    mainScreen.style.display = 'block';
-  });
-
-  otpInputs.forEach((input, idx) => {
-    input.addEventListener('input', () => {
-      input.value = input.value.replace(/[^0-9]/g, '');
-      if (input.value && idx < otpInputs.length - 1) otpInputs[idx + 1].focus();
-    });
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Backspace' && !input.value && idx > 0) otpInputs[idx - 1].focus();
-    });
-  });
-
-  document.getElementById('verifyOtpBtn').addEventListener('click', () => {
-    const code = Array.from(otpInputs).map(i => i.value).join('');
-
-    if (code.length < 6) {
-      otpError.textContent = 'Please enter the full 6-digit code.';
-      otpError.classList.add('show');
-      return;
-    }
-
-    if (code !== generatedCode) {
-      otpError.textContent = 'Incorrect code. Please try again.';
-      otpError.classList.add('show');
-      otpInputs.forEach(i => i.value = '');
-      otpInputs[0].focus();
-      return;
-    }
-
-    otpError.classList.remove('show');
-    alert('Phone verified.\n\n(Phone-based login itself still needs an SMS provider connected — for now, please use email login.)');
-
-    otpScreen.classList.remove('active');
-    mainScreen.style.display = 'block';
-  });
-
-  function startResendTimer() {
-    const resendBtn = document.getElementById('resendBtn');
-    const timerSpan = document.getElementById('resendTimer');
-    let seconds = 30;
-    resendBtn.disabled = true;
-    const interval = setInterval(() => {
-      seconds--;
-      timerSpan.textContent = seconds;
-      if (seconds <= 0) {
-        clearInterval(interval);
-        resendBtn.disabled = false;
-        resendBtn.innerHTML = 'Resend Code';
-      }
-    }, 1000);
-  }
 </script>
 
 </body>
